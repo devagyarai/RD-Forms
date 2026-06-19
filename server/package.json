@@ -1,5 +1,5 @@
 {
-  "name": "form-builder-server",
+  "name": "rd-forms-server",
   "version": "1.0.0",
   "description": "Dynamic Form Builder API server",
   "main": "src/app.js",

@@ -1,183 +1,120 @@
-# FormCraft — Dynamic Form Builder
+# RD Forms — Premium Dynamic Form Builder
 
-> **ReadyNest Full Stack Development Internship — Week 1**
+> **ReadyNest Full Stack Development Internship — Week 1 Project**
 
-A full-stack web application that allows users to create dynamic forms, share them via unique links, collect responses in real-time, and view analytics on a dashboard.
+**RD Forms** is a professional, full-stack SaaS application that enables users to create dynamic forms, share them via unique links or QR codes, collect responses in real-time, and analyze submission data through an intuitive, premium dashboard. 
 
----
-
-## 🚀 Live Demo
-
-- **Frontend:** [Vercel link here]
-- **Backend API:** [Render link here]
+Built with a focus on modern UX/UI using a custom **Teal + Cyan design system**, RD Forms rivals commercial platforms with its seamless Drag & Drop interface and comprehensive analytics.
 
 ---
 
-## ✨ Features
+## ✨ Core Features & Requirements Fulfilled
 
-| Feature | Status |
-|---------|--------|
-| User Authentication (Register / Login / JWT) | ✅ |
-| Dynamic Form Builder (9 field types) | ✅ |
-| Drag & Drop Field Reordering | ✅ |
-| Form Management (Create / Edit / Delete / Duplicate) | ✅ |
-| Publish / Unpublish Forms | ✅ |
-| Public Form Sharing via Unique Link | ✅ |
-| QR Code Generation for Share Links | ✅ |
-| Response Collection with Validation | ✅ |
-| Response Dashboard with Search & Filter | ✅ |
-| Analytics (Views, Submissions, Completion Rate) | ✅ |
-| CSV Export of Responses | ✅ |
-| Responsive Dark UI | ✅ |
+| Feature Requirement | Implementation Status |
+|---------------------|-----------------------|
+| **User Authentication** | ✅ Secure JWT-based Login & Registration with encrypted passwords. |
+| **Dynamic Form Builder** | ✅ 9 supported field types with real-time preview and properties editing. |
+| **Drag & Drop Reordering** | ✅ Implemented using `@dnd-kit` for seamless form architecture. |
+| **Form Management** | ✅ Complete CRUD operations (Create, Edit, Delete, Duplicate). |
+| **Publishing & Sharing** | ✅ Toggle Draft/Live states. Share via unique generated URL links. |
+| **QR Code Generation** | ✅ Instant QR Code generation for physical or fast-mobile sharing. |
+| **Response Collection** | ✅ Public forms handle validation and real-time database submission. |
+| **Analytics Dashboard** | ✅ Tracks Total Forms, Published Status, Form Views, and Completion Rates. |
+| **Data Export** | ✅ 1-click CSV Export for all form responses. |
+| **Premium UI/UX** | ✅ Fully responsive "Teal + Cyan" dark mode design using Poppins typography. |
 
-### Supported Field Types
-- Text Input
-- Email
-- Number
-- Text Area
-- Dropdown
-- Radio Button
-- Checkbox
-- Date Picker
-- Star Rating (1–5)
+### Supported Form Fields
+1. **Text Input**: Short-form text.
+2. **Email**: Validated email input.
+3. **Number**: Numeric values only.
+4. **Text Area**: Long-form paragraph text.
+5. **Dropdown**: Single-select from custom options.
+6. **Radio Button**: Single-select visible options.
+7. **Checkbox**: Multi-select options.
+8. **Date Picker**: Calendar date selection.
+9. **Star Rating**: 1 to 5 visual star rating.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Technology Stack
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React 18 (Vite) |
-| Styling | Vanilla CSS with CSS Variables |
-| Routing | React Router DOM v6 |
-| Drag & Drop | @dnd-kit/core + @dnd-kit/sortable |
-| QR Code | qrcode.react |
-| Backend | Node.js + Express.js |
-| Database | MongoDB (Mongoose) |
-| Authentication | JWT + bcryptjs |
-| Validation | Server-side + client-side |
+| **Frontend Framework** | React 18 (Vite) |
+| **Design System** | Custom Vanilla CSS (Tokens, CSS Variables) |
+| **Routing** | React Router DOM v6 |
+| **Drag & Drop** | `@dnd-kit/core` & `@dnd-kit/sortable` |
+| **Backend API** | Node.js + Express.js |
+| **Database** | MongoDB (Mongoose ORM) |
+| **Authentication** | JWT (JSON Web Tokens) + bcryptjs |
 
 ---
 
-## 📁 Project Structure
+## 📁 Project Architecture
 
 ```
-A Dynamic Form Builder/
-├── client/                  # React (Vite) frontend
+RD-Forms/
+├── client/                  # React (Vite) Frontend Environment
 │   ├── src/
-│   │   ├── api/             # API call functions
-│   │   ├── components/      # Reusable UI components
-│   │   ├── context/         # AuthContext
-│   │   ├── hooks/           # Custom hooks (useToast)
-│   │   ├── pages/           # Route pages
-│   │   └── utils/           # Helper functions
-│   └── package.json
+│   │   ├── api/             # Axios API client wrapper
+│   │   ├── components/      # Reusable UI (Sidebar, Modals)
+│   │   ├── context/         # React Context (Auth)
+│   │   ├── hooks/           # Custom hooks (e.g. useToast)
+│   │   └── pages/           # Main Views (Dashboard, Builder, PublicForm)
+│   └── index.css            # Global Teal+Cyan Design System
 │
-└── server/                  # Express backend
+└── server/                  # Node.js/Express Backend
     ├── src/
     │   ├── controllers/     # Business logic
-    │   ├── middleware/      # Auth middleware
-    │   ├── models/          # Mongoose schemas
-    │   ├── routes/          # Route definitions
-    │   └── utils/           # JWT helpers
-    └── package.json
+    │   ├── middleware/      # JWT verification middleware
+    │   ├── models/          # Mongoose DB Schemas (User, Form, Response)
+    │   └── routes/          # Express API route definitions
+    └── app.js               # Server entry point
 ```
 
 ---
 
-## ⚙️ Setup & Installation
+## ⚙️ Local Development Setup
 
 ### Prerequisites
 - Node.js v18+
-- MongoDB Atlas account (free tier)
+- MongoDB Atlas cluster (Free Tier)
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/dynamic-form-builder.git
-cd dynamic-form-builder
+git clone https://github.com/devagyarai/RD-Forms.git
+cd RD-Forms
 ```
 
-### 2. Set up the server
+### 2. Configure & Run Backend
 ```bash
 cd server
-cp .env.example .env
-# Edit .env with your MongoDB URI and JWT secret
 npm install
+# Create a .env file based on .env.example with MONGO_URI and JWT_SECRET
 npm run dev
 ```
 
-### 3. Set up the client
+### 3. Configure & Run Frontend
 ```bash
 cd client
 npm install
 npm run dev
 ```
 
-### 4. Open in browser
-```
-http://localhost:5173
-```
+### 4. View Application
+Open `http://localhost:5173` in your browser.
 
 ---
 
-## 🔐 Environment Variables
+## 🚀 Deployment Instructions
 
-### `server/.env`
-```env
-PORT=5000
-MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/formbuilder
-JWT_SECRET=your_super_secret_key_here
-CLIENT_URL=http://localhost:5173
-```
-
-### `client/.env`
-```env
-VITE_API_URL=http://localhost:5000/api
-```
-
----
-
-## 🔌 API Reference
-
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/api/auth/register` | ❌ | Register a new user |
-| POST | `/api/auth/login` | ❌ | Login and receive JWT |
-| GET | `/api/auth/me` | ✅ | Get current user |
-| GET | `/api/forms` | ✅ | List all my forms |
-| POST | `/api/forms` | ✅ | Create a new form |
-| GET | `/api/forms/:id` | ✅ | Get a form by ID |
-| PUT | `/api/forms/:id` | ✅ | Update a form |
-| DELETE | `/api/forms/:id` | ✅ | Delete a form |
-| POST | `/api/forms/:id/duplicate` | ✅ | Duplicate a form |
-| GET | `/api/forms/share/:shareId` | ❌ | Get public form |
-| POST | `/api/responses/:formId` | ❌ | Submit a response |
-| GET | `/api/responses/:formId` | ✅ | Get all responses |
-| GET | `/api/responses/:formId/export` | ✅ | Export CSV data |
-
----
-
-## 🚢 Deployment
-
-### Frontend (Vercel)
-```bash
-# In client/ directory
-npm run build
-# Deploy the dist/ folder to Vercel
-```
-
-### Backend (Render)
-- Connect your GitHub repo to Render
-- Set environment variables in Render dashboard
-- Build command: `npm install`
-- Start command: `node src/app.js`
+- **Frontend (Vercel)**: Import the `client` directory as a Vite project. The `vercel.json` rewrite file is already included. Set `VITE_API_URL` to the backend deployment URL.
+- **Backend (Render)**: Import the `server` directory as a Node Web Service. Set `MONGO_URI`, `JWT_SECRET`, and `CLIENT_URL` (pointing to your Vercel URL).
 
 ---
 
 ## 👨‍💻 Author
 
-Built as part of the **ReadyNest Full Stack Development Internship (Week 1)**.
+Built by **Devagya Rai** for the **ReadyNest Full Stack Development Internship (Week 1)**. 
 
----
-
-*Built with ❤ using React + Express + MongoDB*
+*Designed and engineered to meet professional, production-ready SaaS standards.*
