@@ -80,6 +80,9 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  /* Add subtle texture to the entire app */
+  background-image: radial-gradient(rgba(20, 184, 166, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 h1, h2, h3, h4, h5 { color: var(--text-heading); font-weight: 600; line-height: 1.3; letter-spacing: -0.02em; }
@@ -226,7 +229,7 @@ a:hover { color: var(--color-primary-light); }
 .form-select:focus,
 .form-textarea:focus {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15), 0 0 15px rgba(20, 184, 166, 0.1);
 }
 .form-input:hover:not(:focus),
 .form-select:hover:not(:focus),
@@ -386,6 +389,7 @@ a:hover { color: var(--color-primary-light); }
   width: 100%;
   margin: 0 auto;
   padding: 32px 28px;
+  animation: slideUp 0.4s ease forwards;
 }
 
 .page-header {
@@ -426,8 +430,8 @@ a:hover { color: var(--color-primary-light); }
 }
 .form-card:hover {
   border-color: var(--color-primary);
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4), 0 0 15px rgba(20, 184, 166, 0.1);
+  transform: translateY(-4px);
 }
 .form-card:hover .form-card-menu { opacity: 1; }
 
@@ -655,14 +659,20 @@ a:hover { color: var(--color-primary-light); }
    PUBLIC FORM
 ══════════════════════════════════════════════════════ */
 .public-form-page {
-  min-height: 100vh; background: var(--bg-base);
+  min-height: 100vh; 
+  background: radial-gradient(circle at top right, #0F766E 0%, #0B1120 40%),
+              radial-gradient(circle at bottom left, #06B6D4 0%, #0B1120 40%);
+  background-color: var(--bg-base);
   display: flex; flex-direction: column; align-items: center; padding: 40px 20px;
 }
 .public-form-container { width: 100%; max-width: 600px; }
 .public-form-card {
-  background: var(--bg-card); border: 1px solid var(--border-default);
+  background: rgba(31, 41, 55, 0.7); 
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-card); overflow: hidden;
   box-shadow: var(--shadow-xl);
+  animation: slideUp 0.5s ease forwards;
 }
 .public-form-banner { height: 3px; background: var(--gradient-primary); }
 .public-form-body { padding: 32px; }
@@ -760,10 +770,17 @@ a:hover { color: var(--color-primary-light); }
 /* ══════════════════════════════════════════════════════
    EMPTY STATE
 ══════════════════════════════════════════════════════ */
-.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 64px 24px; text-align: center; }
-.empty-state-icon { font-size: 3rem; opacity: 0.25; }
-.empty-state h3 { font-size: 1.05rem; color: var(--text-body); font-weight: 600; }
-.empty-state p  { font-size: 0.875rem; color: var(--text-muted); max-width: 300px; }
+.empty-state { 
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; 
+  padding: 64px 24px; text-align: center; 
+  background: rgba(31, 41, 55, 0.4);
+  border: 1px dashed var(--border-default);
+  border-radius: var(--radius-card);
+  animation: fadeIn 0.4s ease forwards;
+}
+.empty-state-icon { font-size: 3.5rem; opacity: 0.8; filter: drop-shadow(0 4px 12px rgba(20, 184, 166, 0.2)); }
+.empty-state h3 { font-size: 1.15rem; color: var(--text-heading); font-weight: 600; }
+.empty-state p  { font-size: 0.9rem; color: var(--text-muted); max-width: 320px; line-height: 1.6; }
 
 /* ══════════════════════════════════════════════════════
    SEARCH
