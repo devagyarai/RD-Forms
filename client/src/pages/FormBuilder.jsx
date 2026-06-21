@@ -173,34 +173,50 @@ function PropertiesPanel({ field, onChange }) {
   const hasOptions = ["dropdown", "radio", "checkbox"].includes(field.type);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-      <div className="form-group">
-        <label className="form-label">Label</label>
-        <input
-          className="form-input"
-          value={field.label}
-          onChange={(e) => onChange({ ...field, label: e.target.value })}
-          placeholder="Field label"
-        />
-      </div>
-
-      {!["checkbox", "radio", "rating"].includes(field.type) && (
-        <div className="form-group">
-          <label className="form-label">Placeholder</label>
+    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+      {/* ── Basic Settings ── */}
+      <div className="properties-section">
+        <h4 style={{ fontSize: "0.8rem", textTransform: "uppercase", fontWeight: 700, color: "var(--text-muted)", marginBottom: "12px", letterSpacing: "0.05em" }}>Basic Settings</h4>
+        <div className="form-group" style={{ marginBottom: "12px" }}>
+          <label className="form-label">Label</label>
           <input
             className="form-input"
-            value={field.placeholder}
-            onChange={(e) => onChange({ ...field, placeholder: e.target.value })}
-            placeholder="Placeholder text"
+            value={field.label}
+            onChange={(e) => onChange({ ...field, label: e.target.value })}
+            placeholder="Field label"
           />
         </div>
-      )}
 
-      {hasOptions && (
+        {!["checkbox", "radio", "rating"].includes(field.type) && (
+          <div className="form-group" style={{ marginBottom: "12px" }}>
+            <label className="form-label">Placeholder</label>
+            <input
+              className="form-input"
+              value={field.placeholder}
+              onChange={(e) => onChange({ ...field, placeholder: e.target.value })}
+              placeholder="Placeholder text"
+            />
+          </div>
+        )}
+
         <div className="form-group">
-          <label className="form-label">Options</label>
+          <label className="form-label">Help Text</label>
+          <textarea
+            className="form-input"
+            value={field.helpText || ""}
+            onChange={(e) => onChange({ ...field, helpText: e.target.value })}
+            placeholder="Subtext below the field..."
+            rows="2"
+          />
+        </div>
+      </div>
+
+      {/* ── Options (If Applicable) ── */}
+      {hasOptions && (
+        <div className="properties-section">
+          <h4 style={{ fontSize: "0.8rem", textTransform: "uppercase", fontWeight: 700, color: "var(--text-muted)", marginBottom: "12px", letterSpacing: "0.05em" }}>Options</h4>
           {field.options?.map((opt, i) => (
-            <div key={i} style={{ display: "flex", gap: "6px", marginBottom: "6px" }}>
+            <div key={i} style={{ display: "flex", gap: "6px", marginBottom: "8px" }}>
               <input
                 className="form-input"
                 value={opt}
@@ -213,7 +229,7 @@ function PropertiesPanel({ field, onChange }) {
               />
               <button
                 className="btn btn-ghost btn-icon"
-                style={{ color: "var(--color-danger)", flexShrink: 0 }}
+                style={{ color: "var(--color-danger)", flexShrink: 0, background: "var(--bg-elevated)" }}
                 onClick={() => {
                   const newOpts = field.options.filter((_, j) => j !== i);
                   onChange({ ...field, options: newOpts });
@@ -234,56 +250,53 @@ function PropertiesPanel({ field, onChange }) {
         </div>
       )}
 
-      <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", padding: "10px 14px", background: "var(--bg-input)", borderRadius: "var(--radius-md)", border: "1px solid var(--border-default)" }}>
-        <input
-          type="checkbox"
-          checked={field.required}
-          onChange={(e) => onChange({ ...field, required: e.target.checked })}
-          style={{ accentColor: "var(--color-primary)", width: "16px", height: "16px" }}
-        />
-        <span style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--text-muted)" }}>
-          Required field
-        </span>
-        {field.required && (
-          <span style={{ marginLeft: "auto", color: "var(--color-danger)", fontSize: "0.8rem" }}>*</span>
-        )}
-      </label>
+      {/* ── Validation & Logic ── */}
+      <div className="properties-section">
+        <h4 style={{ fontSize: "0.8rem", textTransform: "uppercase", fontWeight: 700, color: "var(--text-muted)", marginBottom: "12px", letterSpacing: "0.05em" }}>Validation & Logic</h4>
+        <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", padding: "10px 14px", background: "var(--bg-input)", borderRadius: "var(--radius-md)", border: "1px solid var(--border-default)", marginBottom: "8px" }}>
+          <input
+            type="checkbox"
+            checked={field.required}
+            onChange={(e) => onChange({ ...field, required: e.target.checked })}
+            style={{ accentColor: "var(--color-primary)", width: "16px", height: "16px" }}
+          />
+          <span style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--text-muted)" }}>
+            Required field
+          </span>
+          {field.required && (
+            <span style={{ marginLeft: "auto", color: "var(--color-danger)", fontSize: "0.8rem" }}>*</span>
+          )}
+        </label>
 
-      <div className="form-group">
-        <label className="form-label">Help Text / Description</label>
-        <textarea
-          className="form-input"
-          value={field.helpText || ""}
-          onChange={(e) => onChange({ ...field, helpText: e.target.value })}
-          placeholder="Subtext below the field..."
-          rows="2"
-        />
+        <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", padding: "10px 14px", background: "var(--bg-input)", borderRadius: "var(--radius-md)", border: "1px solid var(--border-default)" }}>
+          <input
+            type="checkbox"
+            checked={field.conditional || false}
+            onChange={(e) => onChange({ ...field, conditional: e.target.checked })}
+            style={{ accentColor: "var(--color-primary)", width: "16px", height: "16px" }}
+          />
+          <span style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--text-muted)" }}>
+            Enable Conditional Logic
+          </span>
+        </label>
       </div>
 
-      <div className="form-group">
-        <label className="form-label">Custom Width</label>
-        <select
-          className="form-input"
-          value={field.width || "100%"}
-          onChange={(e) => onChange({ ...field, width: e.target.value })}
-        >
-          <option value="100%">Full Width (100%)</option>
-          <option value="50%">Half Width (50%)</option>
-          <option value="33%">One Third (33%)</option>
-        </select>
+      {/* ── Appearance ── */}
+      <div className="properties-section">
+        <h4 style={{ fontSize: "0.8rem", textTransform: "uppercase", fontWeight: 700, color: "var(--text-muted)", marginBottom: "12px", letterSpacing: "0.05em" }}>Appearance</h4>
+        <div className="form-group">
+          <label className="form-label">Custom Width</label>
+          <select
+            className="form-input"
+            value={field.width || "100%"}
+            onChange={(e) => onChange({ ...field, width: e.target.value })}
+          >
+            <option value="100%">Full Width (100%)</option>
+            <option value="50%">Half Width (50%)</option>
+            <option value="33%">One Third (33%)</option>
+          </select>
+        </div>
       </div>
-
-      <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", padding: "10px 14px", background: "var(--bg-input)", borderRadius: "var(--radius-md)", border: "1px solid var(--border-default)" }}>
-        <input
-          type="checkbox"
-          checked={field.conditional || false}
-          onChange={(e) => onChange({ ...field, conditional: e.target.checked })}
-          style={{ accentColor: "var(--color-primary)", width: "16px", height: "16px" }}
-        />
-        <span style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--text-muted)" }}>
-          Enable Conditional Logic
-        </span>
-      </label>
     </div>
   );
 }

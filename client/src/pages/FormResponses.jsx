@@ -208,6 +208,7 @@ export default function FormResponses({ showToast }) {
               <p>
                 {search
                   ? "Try a different keyword or clear filters."
+                  : "Share your form to start collecting data."}
               </p>
             </div>
           ) : (

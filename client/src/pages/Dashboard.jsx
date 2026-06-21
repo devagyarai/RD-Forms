@@ -202,13 +202,10 @@ export default function Dashboard({ showToast }) {
     f.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Mock Activity Feed
-  const MOCK_ACTIVITIES = [
-    { id: 1, text: 'You published "Customer Feedback Survey"', time: '2 hours ago', icon: '🚀' },
-    { id: 2, text: '"Event Registration" received 5 new submissions', time: '5 hours ago', icon: '📈' },
-    { id: 3, text: 'You created "Internal Team Sync"', time: '1 day ago', icon: '✨' },
-    { id: 4, text: 'Alex updated the workspace settings', time: '2 days ago', icon: '⚙️' }
-  ];
+  // Calculate Real Aggregate Metrics
+  const totalSubmissions = forms.reduce((acc, f) => acc + (f.analytics?.submissions || 0), 0);
+  const totalViews = forms.reduce((acc, f) => acc + (f.analytics?.views || 0), 0);
+  const avgCompletion = totalViews > 0 ? Math.round((totalSubmissions / totalViews) * 100) : 0;
 
   return (
     <div className="layout">
@@ -234,9 +231,9 @@ export default function Dashboard({ showToast }) {
           {/* Productivity Widgets */}
           <section className="stagger-2">
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-              <StatCard icon="📋" label="Total Forms" value={forms.length} trend="12%" trendUp={true} />
-              <StatCard icon="📥" label="Submissions (30d)" value={forms.reduce((acc, f) => acc + (f.analytics?.submissions || 0), 0) + 142} trend="24%" trendUp={true} />
-              <StatCard icon="⚡" label="Avg. Completion Rate" value="68%" trend="4%" trendUp={false} />
+              <StatCard icon="📋" label="Total Forms" value={forms.length} />
+              <StatCard icon="📥" label="Total Submissions" value={totalSubmissions} />
+              <StatCard icon="⚡" label="Avg. Completion Rate" value={`${avgCompletion}%`} />
             </div>
           </section>
 
@@ -293,25 +290,32 @@ export default function Dashboard({ showToast }) {
               )}
             </section>
 
-            {/* Mock Activity Feed */}
+            {/* Real Activity Feed Placeholder */}
             <aside style={{ width: '320px', background: 'var(--bg-card)', borderRadius: 'var(--radius-card)', border: '1px solid var(--border-default)', padding: '24px', flexShrink: 0 }} className="desktop-only stagger-4">
               <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ color: 'var(--color-primary)' }}>⚡</span> Activity Feed
+                <span style={{ color: 'var(--color-primary)' }}>⚡</span> Recent Forms
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {MOCK_ACTIVITIES.map(act => (
-                  <div key={act.id} style={{ display: 'flex', gap: '16px' }}>
+                {forms.slice(0, 4).map(f => (
+                  <div key={f._id} style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                     <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      {act.icon}
+                      {f.settings?.isPublished ? '🚀' : '✏️'}
                     </div>
-                    <div>
-                      <div style={{ fontSize: '0.9rem', color: 'var(--text-heading)', lineHeight: 1.4 }}>{act.text}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>{act.time}</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: '0.9rem', color: 'var(--text-heading)', lineHeight: 1.4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{f.title}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                        {f.analytics?.submissions || 0} Submissions
+                      </div>
                     </div>
                   </div>
                 ))}
+                {forms.length === 0 && (
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textAlign: 'center' }}>
+                    Create a form to see activity.
+                  </div>
+                )}
               </div>
-              <button className="btn btn-ghost" style={{ width: '100%', marginTop: '24px', fontSize: '0.85rem' }}>View All Activity</button>
+              <button className="btn btn-ghost" style={{ width: '100%', marginTop: '24px', fontSize: '0.85rem' }} onClick={() => navigate('/analytics')}>View Detailed Analytics</button>
             </aside>
           </div>
         </div>
