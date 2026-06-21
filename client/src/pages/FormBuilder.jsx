@@ -31,26 +31,63 @@ function getShareUrl(shareId) {
 }
 
 // ── Field type definitions ────────────────────────────────────
-const FIELD_TYPES = [
-  { type: "text",     icon: "Aa",  label: "Text Input",   color: "#14B8A6" }, // Teal
-  { type: "email",    icon: "✉",   label: "Email",        color: "#3B82F6" }, // Blue
-  { type: "number",   icon: "#",   label: "Number",       color: "#A855F7" }, // Purple
-  { type: "textarea", icon: "¶",   label: "Text Area",    color: "#14B8A6" }, // Teal
-  { type: "dropdown", icon: "▾",   label: "Dropdown",     color: "#F59E0B" }, // Amber
-  { type: "radio",    icon: "◉",   label: "Radio Button", color: "#EF4444" }, // Red
-  { type: "checkbox", icon: "☑",   label: "Checkbox",     color: "#22C55E" }, // Green
-  { type: "date",     icon: "📅",  label: "Date Picker",  color: "#A855F7" }, // Purple
-  { type: "rating",   icon: "★",   label: "Star Rating",  color: "#F59E0B" }, // Amber
+const FIELD_CATEGORIES = [
+  {
+    name: "Basic Fields",
+    fields: [
+      { type: "text",     icon: "Aa",  label: "Text Input",   color: "#14B8A6" },
+      { type: "email",    icon: "✉",   label: "Email",        color: "#3B82F6" },
+      { type: "phone",    icon: "📞",  label: "Phone",        color: "#10B981" },
+      { type: "number",   icon: "#",   label: "Number",       color: "#A855F7" },
+      { type: "textarea", icon: "¶",   label: "Text Area",    color: "#14B8A6" },
+      { type: "date",     icon: "📅",  label: "Date",         color: "#A855F7" },
+      { type: "time",     icon: "⏰",  label: "Time",         color: "#F43F5E" },
+    ]
+  },
+  {
+    name: "Selection",
+    fields: [
+      { type: "radio",    icon: "◉",   label: "Radio Button", color: "#EF4444" },
+      { type: "checkbox", icon: "☑",   label: "Checkbox",     color: "#22C55E" },
+      { type: "dropdown", icon: "▾",   label: "Dropdown",     color: "#F59E0B" },
+    ]
+  },
+  {
+    name: "Advanced",
+    fields: [
+      { type: "file",     icon: "📎",  label: "File Upload",  color: "#6366F1" },
+      { type: "rating",   icon: "★",   label: "Rating",       color: "#F59E0B" },
+      { type: "slider",   icon: "⎚",   label: "Slider",       color: "#8B5CF6" },
+      { type: "signature",icon: "✍",   label: "Signature",    color: "#06B6D4" },
+      { type: "url",      icon: "🔗",  label: "URL",          color: "#0EA5E9" },
+      { type: "password", icon: "🔒",  label: "Password",     color: "#64748B" },
+    ]
+  },
+  {
+    name: "Layout",
+    fields: [
+      { type: "section",  icon: "⛶",   label: "Section",      color: "#64748B" },
+      { type: "divider",  icon: "―",   label: "Divider",      color: "#94A3B8" },
+      { type: "heading",  icon: "H1",  label: "Heading",      color: "#475569" },
+      { type: "paragraph",icon: "≣",   label: "Paragraph",    color: "#475569" },
+      { type: "image",    icon: "🖼",  label: "Image",        color: "#EC4899" },
+    ]
+  }
 ];
 
+const ALL_FIELDS = FIELD_CATEGORIES.flatMap(c => c.fields);
+
 function createField(type) {
-  const def = FIELD_TYPES.find((f) => f.type === type);
+  const def = ALL_FIELDS.find((f) => f.type === type);
   return {
     id: generateId(),
     type,
     label: def?.label || "Field",
     placeholder: "",
+    helpText: "",
     required: false,
+    width: "100%",
+    conditional: false,
     options: ["dropdown", "radio", "checkbox"].includes(type)
       ? ["Option 1", "Option 2"]
       : [],
@@ -202,6 +239,42 @@ function PropertiesPanel({ field, onChange }) {
         {field.required && (
           <span style={{ marginLeft: "auto", color: "var(--color-danger)", fontSize: "0.8rem" }}>*</span>
         )}
+      </label>
+
+      <div className="form-group">
+        <label className="form-label">Help Text / Description</label>
+        <textarea
+          className="form-input"
+          value={field.helpText || ""}
+          onChange={(e) => onChange({ ...field, helpText: e.target.value })}
+          placeholder="Subtext below the field..."
+          rows="2"
+        />
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">Custom Width</label>
+        <select
+          className="form-input"
+          value={field.width || "100%"}
+          onChange={(e) => onChange({ ...field, width: e.target.value })}
+        >
+          <option value="100%">Full Width (100%)</option>
+          <option value="50%">Half Width (50%)</option>
+          <option value="33%">One Third (33%)</option>
+        </select>
+      </div>
+
+      <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", padding: "10px 14px", background: "var(--bg-input)", borderRadius: "var(--radius-md)", border: "1px solid var(--border-default)" }}>
+        <input
+          type="checkbox"
+          checked={field.conditional || false}
+          onChange={(e) => onChange({ ...field, conditional: e.target.checked })}
+          style={{ accentColor: "var(--color-primary)", width: "16px", height: "16px" }}
+        />
+        <span style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--text-muted)" }}>
+          Enable Conditional Logic
+        </span>
       </label>
     </div>
   );
@@ -372,6 +445,13 @@ export default function FormBuilder({ showToast }) {
   const [activeId, setActiveId] = useState(null);
   const [hasUnsaved, setHasUnsaved] = useState(false);
   const [mobileTab, setMobileTab] = useState("canvas"); // 'add', 'canvas', 'properties'
+  const [fieldSearch, setFieldSearch] = useState("");
+  const [expandedCategories, setExpandedCategories] = useState({
+    "Basic Fields": true,
+    "Selection": true,
+    "Advanced": true,
+    "Layout": true
+  });
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -539,15 +619,22 @@ export default function FormBuilder({ showToast }) {
               {isPublished ? "● Live" : "○ Draft"}
             </span>
 
-            {isPublished && form?.shareId && (
-              <button
-                className="btn btn-secondary btn-sm"
-                onClick={() => setShowShare(true)}
-                id="share-btn"
-              >
-                🔗 Share / QR
-              </button>
-            )}
+            <button
+              className="btn btn-ghost btn-sm"
+              onClick={() => window.open(`/form/${id}`, '_blank')}
+            >
+              👁 Preview
+            </button>
+
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={() => setShowShare(true)}
+              disabled={!isPublished || !form?.shareId}
+              title={!isPublished ? "Publish to share" : "Share form"}
+              id="share-btn"
+            >
+              📤 Share
+            </button>
 
             <button
               className="btn btn-secondary btn-sm"
@@ -575,23 +662,58 @@ export default function FormBuilder({ showToast }) {
           {/* Left panel — field palette */}
           <div className={`builder-sidebar ${mobileTab !== 'add' ? 'mobile-hidden' : ''}`}>
             <p className="sidebar-section-label" style={{ marginBottom: "10px" }}>Add Fields</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              {FIELD_TYPES.map((ft) => (
-                <button
-                  key={ft.type}
-                  className="field-type-btn"
-                  onClick={() => addField(ft.type)}
-                  id={`add-field-${ft.type}`}
-                >
-                  <div
-                    className="field-type-icon"
-                    style={{ background: `${ft.color}22`, color: ft.color }}
-                  >
-                    {ft.icon}
+            
+            <input 
+              type="text" 
+              className="form-input" 
+              placeholder="Search fields..." 
+              value={fieldSearch}
+              onChange={(e) => setFieldSearch(e.target.value)}
+              style={{ marginBottom: '16px' }}
+            />
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              {FIELD_CATEGORIES.map((category) => {
+                const filteredFields = category.fields.filter(f => 
+                  f.label.toLowerCase().includes(fieldSearch.toLowerCase())
+                );
+                
+                if (filteredFields.length === 0) return null;
+
+                return (
+                  <div key={category.name} className="field-category">
+                    <div 
+                      className="field-category-header" 
+                      onClick={() => setExpandedCategories(prev => ({...prev, [category.name]: !prev[category.name]}))}
+                      style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', padding: '6px 0', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}
+                    >
+                      {category.name}
+                      <span>{expandedCategories[category.name] ? '▼' : '▶'}</span>
+                    </div>
+                    
+                    {expandedCategories[category.name] && (
+                      <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginTop: '8px' }}>
+                        {filteredFields.map((ft) => (
+                          <button
+                            key={ft.type}
+                            className="field-type-btn"
+                            onClick={() => addField(ft.type)}
+                            id={`add-field-${ft.type}`}
+                          >
+                            <div
+                              className="field-type-icon"
+                              style={{ background: `${ft.color}22`, color: ft.color }}
+                            >
+                              {ft.icon}
+                            </div>
+                            {ft.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  {ft.label}
-                </button>
-              ))}
+                );
+              })}
             </div>
 
             {/* Field count */}
@@ -626,12 +748,40 @@ export default function FormBuilder({ showToast }) {
 
             {/* Fields or empty state */}
             {fields.length === 0 ? (
-              <div className="canvas-empty">
-                <div className="canvas-empty-icon">📋</div>
-                <h3 style={{ color: "var(--text-secondary)" }}>Start building your form</h3>
-                <p style={{ fontSize: "0.875rem" }}>
-                  Click any field type on the left panel to add it here
+              <div className="canvas-empty animate-fade-in" style={{ 
+                border: '2px dashed var(--border-default)', 
+                borderRadius: 'var(--radius-card)',
+                padding: '60px 20px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'var(--bg-base)',
+                color: 'var(--text-muted)'
+              }}>
+                <div style={{ 
+                  width: '64px', height: '64px', 
+                  borderRadius: '50%', background: 'var(--bg-elevated)', 
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '2rem', marginBottom: '24px',
+                  boxShadow: 'var(--shadow-sm)'
+                }}>✨</div>
+                <h3 style={{ color: "var(--text-heading)", fontSize: '1.2rem', fontWeight: 600, marginBottom: '8px' }}>Your canvas is empty</h3>
+                <p style={{ fontSize: "0.9rem", maxWidth: '300px', textAlign: 'center', lineHeight: 1.5 }}>
+                  Drag and drop fields from the left panel, or click to add them instantly.
                 </p>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '24px' }}>
+                  {FIELD_CATEGORIES[0].fields.slice(0, 3).map(f => (
+                    <button 
+                      key={f.type}
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => addField(f.type)}
+                      style={{ fontSize: '0.8rem' }}
+                    >
+                      + {f.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             ) : (
               <DndContext

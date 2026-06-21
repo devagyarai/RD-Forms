@@ -43,6 +43,13 @@ export default function Sidebar() {
           >
             <span>⊞</span> Dashboard
           </NavLink>
+          <NavLink
+            to="/settings"
+            className={({ isActive }) => `top-nav-link ${isActive ? "active" : ""}`}
+            id="nav-settings"
+          >
+            <span>⚙️</span> Settings
+          </NavLink>
         </div>
 
         {/* Right: user chip + logout */}
@@ -102,6 +109,13 @@ export default function Sidebar() {
             onClick={() => setMobileOpen(false)}
           >
             <span>⊞</span> Dashboard
+          </NavLink>
+          <NavLink
+            to="/settings"
+            className={({ isActive }) => `top-nav-link ${isActive ? "active" : ""}`}
+            onClick={() => setMobileOpen(false)}
+          >
+            <span>⚙️</span> Settings
           </NavLink>
         </div>
 
