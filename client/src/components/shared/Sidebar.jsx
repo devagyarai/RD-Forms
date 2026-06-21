@@ -31,9 +31,8 @@ export default function Sidebar() {
         </button>
         
         {/* Logo */}
-        <NavLink to="/dashboard" className="top-nav-logo" onClick={() => setMobileOpen(false)}>
-          <div className="top-nav-logo-icon">📋</div>
-          <span className="top-nav-logo-text">RD Forms</span>
+        <NavLink to="/dashboard" className="top-nav-logo" onClick={() => setMobileOpen(false)} style={{ padding: 0 }}>
+          <img src="/logo.png" alt="RD Forms Logo" style={{ height: "40px", width: "auto", objectFit: "contain" }} />
         </NavLink>
 
         {/* Desktop Nav links */}
@@ -136,9 +135,8 @@ export default function Sidebar() {
       {/* ── Mobile Drawer ── */}
       <div className={`mobile-drawer ${mobileOpen ? "open" : ""}`}>
         <div className="mobile-drawer-header">
-          <div className="top-nav-logo">
-            <div className="top-nav-logo-icon">📋</div>
-            <span className="top-nav-logo-text">RD Forms</span>
+          <div className="top-nav-logo" style={{ padding: 0 }}>
+            <img src="/logo.png" alt="RD Forms Logo" style={{ height: "40px", width: "auto", objectFit: "contain" }} />
           </div>
           <button className="btn btn-ghost btn-icon" onClick={() => setMobileOpen(false)}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

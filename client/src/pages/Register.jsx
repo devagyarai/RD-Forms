@@ -44,12 +44,8 @@ export default function Register({ showToast }) {
       {/* ── Left Panel ── */}
       <div className="auth-panel-left">
         <div className="auth-panel-brand">
-          <div className="auth-panel-logo-wrap">
-            <div className="auth-panel-logo-icon">📋</div>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--text-heading)" }}>RD Forms</div>
-              <div style={{ fontSize: "0.68rem", color: "var(--color-primary)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em" }}>Form Builder</div>
-            </div>
+          <div className="auth-panel-logo-wrap" style={{ display: 'flex', justifyContent: 'center' }}>
+            <img src="/logo.png" alt="RD Forms Logo" style={{ maxWidth: "200px", height: "auto", objectFit: "contain" }} />
           </div>
 
           <div className="auth-panel-tagline">
