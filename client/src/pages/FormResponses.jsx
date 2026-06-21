@@ -149,6 +149,7 @@ export default function FormResponses({ showToast }) {
               className="btn btn-primary"
               onClick={handleExport}
               disabled={exporting || responses.length === 0}
+              title={responses.length === 0 ? "No responses to export yet" : "Download responses as CSV"}
             >
               {exporting ? <><div className="spinner" /> Exporting...</> : "⬇ Export CSV"}
             </button>
