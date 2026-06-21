@@ -1,84 +1,123 @@
-# RD Forms — Premium Dynamic Form Builder
+# RD Forms 📋
 
-> **ReadyNest Full Stack Development Internship — Week 1 Project**
+**Build forms that actually get filled.**
 
-**RD Forms** is a professional, full-stack SaaS application that enables users to create dynamic forms, share them via unique links or QR codes, collect responses in real-time, and analyze submission data through an intuitive, premium dashboard. 
+RD Forms is a full-stack, dynamic form builder built from the ground up for modern SaaS workflows. It allows users to create professional forms using a drag-and-drop interface, share them instantly via links or QR codes, and track responses and completion rates in real-time.
 
-Built with a focus on modern UX/UI using a custom **Teal + Cyan design system**, RD Forms rivals commercial platforms with its seamless Drag & Drop interface and comprehensive analytics.
-
----
-
-## ✨ Core Features & Requirements Fulfilled
-
-| Feature Requirement | Implementation Status |
-|---------------------|-----------------------|
-| **User Authentication** | ✅ Secure JWT-based Login & Registration with encrypted passwords. |
-| **Dynamic Form Builder** | ✅ 9 supported field types with real-time preview and properties editing. |
-| **Drag & Drop Reordering** | ✅ Implemented using `@dnd-kit` for seamless form architecture. |
-| **Form Management** | ✅ Complete CRUD operations (Create, Edit, Delete, Duplicate). |
-| **Publishing & Sharing** | ✅ Toggle Draft/Live states. Share via unique generated URL links. |
-| **QR Code Generation** | ✅ Instant QR Code generation for physical or fast-mobile sharing. |
-| **Response Collection** | ✅ Public forms handle validation and real-time database submission. |
-| **Analytics Dashboard** | ✅ Tracks Total Forms, Published Status, Form Views, and Completion Rates. |
-| **Data Export** | ✅ 1-click CSV Export for all form responses. |
-| **Premium UI/UX** | ✅ Fully responsive "Teal + Cyan" dark mode design using Poppins typography. |
-
-### Supported Form Fields
-1. **Text Input**: Short-form text.
-2. **Email**: Validated email input.
-3. **Number**: Numeric values only.
-4. **Text Area**: Long-form paragraph text.
-5. **Dropdown**: Single-select from custom options.
-6. **Radio Button**: Single-select visible options.
-7. **Checkbox**: Multi-select options.
-8. **Date Picker**: Calendar date selection.
-9. **Star Rating**: 1 to 5 visual star rating.
+![RD Forms Logo](client/public/logo.png)
 
 ---
 
-## 🛠️ Technology Stack
+## 🚀 Features
 
-| Layer | Technology |
-|-------|-----------|
-| **Frontend Framework** | React 18 (Vite) |
-| **Design System** | Custom Vanilla CSS (Tokens, CSS Variables) |
-| **Routing** | React Router DOM v6 |
-| **Drag & Drop** | `@dnd-kit/core` & `@dnd-kit/sortable` |
-| **Backend API** | Node.js + Express.js |
-| **Database** | MongoDB (Mongoose ORM) |
-| **Authentication** | JWT (JSON Web Tokens) + bcryptjs |
+### Core Functionality
+- **Drag & Drop Form Builder:** Intuitively build forms using `@dnd-kit` with reorderable fields.
+- **Multiple Field Types:** Supports Text, Email, Phone, Number, Textarea, Select, Checkbox, Radio, Date, Rating, and pre-built blocks (Address, Contact).
+- **Real-Time Preview:** Toggle seamlessly between Edit mode and Live Preview.
+- **Form Publishing:** Drafts save automatically. Publish to generate a shareable public link.
+- **QR Code Generation:** Instantly generate and download QR codes for any published form.
+
+### Responses & Analytics
+- **Workspace Analytics:** Top-level dashboard showing total views, total submissions, and average completion rates across all your forms.
+- **Individual Form Insights:** Drill down into specific forms to view their unique KPIs (views vs. submissions).
+- **Response Management:** View all submitted data in a clean, paginated data table.
+- **CSV Export:** Download all responses for a form (or high-level workspace analytics) directly into a `.csv` file.
+
+### Platform & Architecture
+- **Authentication:** Secure JWT-based authentication system with hashed passwords.
+- **Theming System:** Fully custom CSS variable-based theming supporting Light ("ocean-blue") and Dark ("midnight-dark") modes.
+- **Command Palette:** Quick-action keyboard shortcuts (`Ctrl/Cmd + K`) for power users.
+- **Responsive Design:** A mobile-first approach ensuring the builder and public forms look flawless on any device.
 
 ---
 
-## 📁 Project Architecture
+## 🛠️ Tech Stack
 
-```
-RD-Forms/
-├── client/                  # React (Vite) Frontend Environment
+This project uses a standard MERN-like stack, swapping standard React for Vite for significantly faster HMR and builds.
+
+### Frontend (Client)
+- **Framework:** React 18
+- **Build Tool:** Vite
+- **Routing:** React Router v6
+- **Drag & Drop:** `@dnd-kit` (Core, Sortable, Utilities)
+- **QR Codes:** `qrcode.react`
+- **Styling:** Vanilla CSS with custom CSS variables (No Tailwind)
+- **State Management:** React Context API (`AuthContext`, `ThemeContext`)
+
+### Backend (Server)
+- **Runtime:** Node.js
+- **Framework:** Express.js
+- **Database:** MongoDB
+- **ORM/ODM:** Mongoose
+- **Authentication:** `jsonwebtoken` (JWT) & `bcryptjs`
+- **Validation:** `zod`
+- **ID Generation:** `nanoid` (for generating unique share links)
+
+---
+
+## 📂 Project Structure
+
+```text
+.
+├── client/                     # Frontend Vite + React application
+│   ├── public/                 # Static assets (favicon, logo)
 │   ├── src/
-│   │   ├── api/             # Axios API client wrapper
-│   │   ├── components/      # Reusable UI (Sidebar, Modals)
-│   │   ├── context/         # React Context (Auth)
-│   │   ├── hooks/           # Custom hooks (e.g. useToast)
-│   │   └── pages/           # Main Views (Dashboard, Builder, PublicForm)
-│   └── index.css            # Global Teal+Cyan Design System
+│   │   ├── api/                # Axios/Fetch wrappers for backend communication
+│   │   ├── assets/             # Internal assets and images
+│   │   ├── components/         # Reusable UI components (Sidebar, CommandPalette, etc.)
+│   │   ├── context/            # Global React contexts (Auth, Theme)
+│   │   ├── hooks/              # Custom React hooks (useToast)
+│   │   ├── pages/              # Primary route views (Dashboard, FormBuilder, Analytics, etc.)
+│   │   ├── utils/              # Helper functions (CSV download, initials generator)
+│   │   ├── App.jsx             # Main application router
+│   │   └── index.css           # Global design system & theme variables
+│   ├── index.html              # Entry HTML file
+│   └── package.json
 │
-└── server/                  # Node.js/Express Backend
+└── server/                     # Backend Express API
     ├── src/
-    │   ├── controllers/     # Business logic
-    │   ├── middleware/      # JWT verification middleware
-    │   ├── models/          # Mongoose DB Schemas (User, Form, Response)
-    │   └── routes/          # Express API route definitions
-    └── app.js               # Server entry point
+    │   ├── controllers/        # Route logic (auth, form, response)
+    │   ├── middleware/         # Custom middlewares (JWT auth verification)
+    │   ├── models/             # Mongoose schemas (User, Form, Response)
+    │   ├── routes/             # Express API routing definitions
+    │   ├── utils/              # Backend utilities (JWT signing)
+    │   └── app.js              # Express server entry point
+    ├── .env.example
+    └── package.json
 ```
 
 ---
 
-## ⚙️ Local Development Setup
+## ⚙️ Environment Variables
 
-### Prerequisites
-- Node.js v18+
-- MongoDB Atlas cluster (Free Tier)
+To run this project, you will need to add the following environment variables to your respective `.env` files.
+
+### Server (`server/.env`)
+
+```env
+# The port your backend server will run on (default: 5000)
+PORT=5000
+
+# Your MongoDB connection string
+MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/rd-forms?retryWrites=true&w=majority
+
+# Secret key for signing JSON Web Tokens
+JWT_SECRET=supersecretjwtkey_changeme_in_production
+
+# The URL of your frontend application (for CORS)
+CLIENT_URL=http://localhost:5173
+```
+
+### Client (`client/.env`)
+
+```env
+# The URL pointing to your backend API
+VITE_API_URL=http://localhost:5000/api
+```
+
+---
+
+## 💻 Running Locally
 
 ### 1. Clone the repository
 ```bash
@@ -86,35 +125,60 @@ git clone https://github.com/devagyarai/RD-Forms.git
 cd RD-Forms
 ```
 
-### 2. Configure & Run Backend
+### 2. Setup the Server
 ```bash
 cd server
 npm install
-# Create a .env file based on .env.example with MONGO_URI and JWT_SECRET
+
+# Rename .env.example to .env and fill in your credentials
+# Start the development server (uses nodemon)
 npm run dev
 ```
 
-### 3. Configure & Run Frontend
+### 3. Setup the Client
+Open a new terminal window:
 ```bash
 cd client
 npm install
+
+# Start the Vite development server
 npm run dev
 ```
 
-### 4. View Application
-Open `http://localhost:5173` in your browser.
+The client will be available at `http://localhost:5173`.
 
 ---
 
-## 🚀 Deployment Instructions
+## 🏗️ Build Instructions
 
-- **Frontend (Vercel)**: Import the `client` directory as a Vite project. The `vercel.json` rewrite file is already included. Set `VITE_API_URL` to the backend deployment URL.
-- **Backend (Render)**: Import the `server` directory as a Node Web Service. Set `MONGO_URI`, `JWT_SECRET`, and `CLIENT_URL` (pointing to your Vercel URL).
+To build the frontend for production:
+
+```bash
+cd client
+npm run build
+```
+This will generate an optimized, minified bundle in the `client/dist` directory.
 
 ---
 
-## 👨‍💻 Author
+## 🔮 Future Improvements
 
-Built by **Devagya Rai** for the **ReadyNest Full Stack Development Internship (Week 1)**. 
+While RD Forms is fully functional, there are several areas planned for future iterations:
+- **Email Notifications:** Triggering emails upon new form submissions.
+- **Webhooks:** Sending submission payloads to external URLs (e.g., Zapier, Make).
+- **Conditional Logic:** Showing or hiding fields based on previous answers.
+- **File Uploads:** Allowing users to upload documents or images via forms.
+- **Custom Thank You Pages:** Redirecting users after submission.
 
-*Designed and engineered to meet professional, production-ready SaaS standards.*
+---
+
+## ⚠️ Known Limitations
+
+- **File Uploads:** Currently, the builder does not support file/image upload fields natively.
+- **Multi-step Forms:** Forms are currently rendered on a single page, regardless of length.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
