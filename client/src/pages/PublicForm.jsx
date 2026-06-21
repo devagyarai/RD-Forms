@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { formsApi, responsesApi } from "../api";
 
 // ── Star Rating Field ─────────────────────────────────────────
@@ -179,6 +179,8 @@ function ThankYou() {
 // ── Main Public Form Page ─────────────────────────────────────
 export default function PublicForm({ showToast }) {
   const { shareId } = useParams();
+  const [searchParams] = useSearchParams();
+  const isPreview = searchParams.get("preview") === "true";
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -188,12 +190,20 @@ export default function PublicForm({ showToast }) {
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
-    formsApi
-      .getPublic(shareId)
-      .then((data) => setForm(data.form))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, [shareId]);
+    if (isPreview) {
+      formsApi
+        .getById(shareId) // shareId contains the form _id when in preview mode
+        .then((data) => setForm(data.form))
+        .catch((err) => setError(err.message))
+        .finally(() => setLoading(false));
+    } else {
+      formsApi
+        .getPublic(shareId)
+        .then((data) => setForm(data.form))
+        .catch((err) => setError(err.message))
+        .finally(() => setLoading(false));
+    }
+  }, [shareId, isPreview]);
 
   const updateAnswer = (fieldId, value) => {
     setAnswers((prev) => ({ ...prev, [fieldId]: value }));

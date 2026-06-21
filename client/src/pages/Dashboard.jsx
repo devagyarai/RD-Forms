@@ -214,7 +214,7 @@ export default function Dashboard({ showToast }) {
     <div className="layout">
       <Sidebar />
       <main className="main-content">
-        <header className="main-header">
+        <header className="main-header stagger-1">
           <div>
             <h1 className="main-title">Workspace Dashboard</h1>
             <p className="main-subtitle" style={{ marginTop: '8px' }}>Welcome back! Here's what's happening with your forms today.</p>
@@ -232,7 +232,7 @@ export default function Dashboard({ showToast }) {
         <div className="main-inner" style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
           
           {/* Productivity Widgets */}
-          <section>
+          <section className="stagger-2">
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
               <StatCard icon="📋" label="Total Forms" value={forms.length} trend="12%" trendUp={true} />
               <StatCard icon="📥" label="Submissions (30d)" value={forms.reduce((acc, f) => acc + (f.analytics?.submissions || 0), 0) + 142} trend="24%" trendUp={true} />
@@ -242,7 +242,7 @@ export default function Dashboard({ showToast }) {
 
           <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
             {/* Main Form List Area */}
-            <section style={{ flex: 1 }}>
+            <section style={{ flex: 1 }} className="stagger-3">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                 <h2 style={{ fontSize: '1.4rem', fontWeight: 600 }}>Recent Forms</h2>
                 <div className="search-bar" style={{ width: '300px', margin: 0 }}>
@@ -294,7 +294,7 @@ export default function Dashboard({ showToast }) {
             </section>
 
             {/* Mock Activity Feed */}
-            <aside style={{ width: '320px', background: 'var(--bg-card)', borderRadius: 'var(--radius-card)', border: '1px solid var(--border-default)', padding: '24px', flexShrink: 0 }} className="desktop-only">
+            <aside style={{ width: '320px', background: 'var(--bg-card)', borderRadius: 'var(--radius-card)', border: '1px solid var(--border-default)', padding: '24px', flexShrink: 0 }} className="desktop-only stagger-4">
               <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ color: 'var(--color-primary)' }}>⚡</span> Activity Feed
               </h3>

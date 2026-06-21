@@ -38,7 +38,7 @@ export default function Settings({ showToast }) {
 
         <div className="main-inner settings-layout">
           {/* Inner Sidebar for Settings */}
-          <aside className="settings-sidebar">
+          <aside className="settings-sidebar stagger-1">
             <div className="settings-nav">
               <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px', paddingLeft: '16px' }}>Organization</div>
               <button className={`settings-nav-btn ${activeTab === "workspace" ? "active" : ""}`} onClick={() => setActiveTab("workspace")}><span>🏢</span> Workspace</button>
@@ -58,7 +58,7 @@ export default function Settings({ showToast }) {
           </aside>
 
           {/* Settings Content Area */}
-          <div className="settings-content">
+          <div className="settings-content stagger-2">
             
             {activeTab === "workspace" && (
               <div className="animate-fade-in">

@@ -641,7 +641,7 @@ export default function FormBuilder({ showToast }) {
 
             <button
               className="btn btn-ghost btn-sm"
-              onClick={() => window.open(`/form/${id}`, '_blank')}
+              onClick={() => window.open(`/form/${id}?preview=true`, '_blank')}
             >
               👁 Preview
             </button>
@@ -680,7 +680,7 @@ export default function FormBuilder({ showToast }) {
         <div className="builder-body">
 
           {/* Left panel — field palette */}
-          <div className={`builder-sidebar ${mobileTab !== 'add' ? 'mobile-hidden' : ''}`}>
+          <div className={`builder-sidebar stagger-1 ${mobileTab !== 'add' ? 'mobile-hidden' : ''}`}>
             <p className="sidebar-section-label" style={{ marginBottom: "10px" }}>Add Fields</p>
             
             <input 
@@ -748,7 +748,7 @@ export default function FormBuilder({ showToast }) {
           </div>
 
           {/* Center — form canvas */}
-          <div className={`builder-canvas ${mobileTab !== 'canvas' ? 'mobile-hidden' : ''}`}>
+          <div className={`builder-canvas stagger-2 ${mobileTab !== 'canvas' ? 'mobile-hidden' : ''}`}>
             {/* Form header card */}
             <div className="canvas-form-header">
               <input
@@ -858,7 +858,7 @@ export default function FormBuilder({ showToast }) {
           </div>
 
           {/* Right panel — properties */}
-          <div className={`builder-properties ${mobileTab !== 'properties' ? 'mobile-hidden' : ''}`}>
+          <div className={`builder-properties stagger-3 ${mobileTab !== 'properties' ? 'mobile-hidden' : ''}`}>
             <p className="sidebar-section-label" style={{ marginBottom: "16px" }}>Field Properties</p>
             <PropertiesPanel
               field={selectedField}

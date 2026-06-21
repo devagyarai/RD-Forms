@@ -157,7 +157,7 @@ export default function FormResponses({ showToast }) {
 
         <div className="main-inner">
           {/* Advanced Toolbar */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', background: 'var(--bg-card)', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid var(--border-default)', boxShadow: 'var(--shadow-sm)' }}>
+          <div className="stagger-1" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', background: 'var(--bg-card)', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid var(--border-default)', boxShadow: 'var(--shadow-sm)' }}>
             
             <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
               <div className="search-bar" style={{ margin: 0, width: '300px' }}>
@@ -208,11 +208,10 @@ export default function FormResponses({ showToast }) {
               <p>
                 {search
                   ? "Try a different keyword or clear filters."
-                  : "Your form is ready. Share it with your audience to start collecting responses."}
               </p>
             </div>
           ) : (
-            <div style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-card)', border: '1px solid var(--border-default)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
+            <div className="stagger-2" style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-card)', border: '1px solid var(--border-default)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
               <div className="table-wrapper">
                 <table className="response-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead style={{ background: 'var(--bg-elevated)', borderBottom: '1px solid var(--border-default)' }}>
