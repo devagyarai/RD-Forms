@@ -128,6 +128,10 @@ export default function FormResponses({ showToast }) {
     currentPage * itemsPerPage
   );
 
+  const views = form?.analytics?.views || 0;
+  const submissions = form?.analytics?.submissions || 0;
+  const completionRate = views > 0 ? Math.round((submissions / views) * 100) : 0;
+
   return (
     <div className="layout">
       <Sidebar />
@@ -157,8 +161,24 @@ export default function FormResponses({ showToast }) {
         </header>
 
         <div className="main-inner">
+          {/* Individual Form Analytics */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '24px' }}>
+            <div className="stat-card stagger-1" style={{ background: 'var(--bg-card)', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--border-default)', boxShadow: 'var(--shadow-sm)' }}>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Total Views</div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 800, marginTop: '8px' }}>{views.toLocaleString()}</div>
+            </div>
+            <div className="stat-card stagger-2" style={{ background: 'var(--bg-card)', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--border-default)', boxShadow: 'var(--shadow-sm)' }}>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Submissions</div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 800, marginTop: '8px' }}>{submissions.toLocaleString()}</div>
+            </div>
+            <div className="stat-card stagger-3" style={{ background: 'var(--bg-card)', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--border-default)', boxShadow: 'var(--shadow-sm)' }}>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Completion Rate</div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 800, marginTop: '8px', color: 'var(--color-primary)' }}>{completionRate}%</div>
+            </div>
+          </div>
+
           {/* Advanced Toolbar */}
-          <div className="stagger-1" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', background: 'var(--bg-card)', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid var(--border-default)', boxShadow: 'var(--shadow-sm)' }}>
+          <div className="stagger-4" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', background: 'var(--bg-card)', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid var(--border-default)', boxShadow: 'var(--shadow-sm)' }}>
             
             <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
               <div className="search-bar" style={{ margin: 0, width: '300px' }}>
