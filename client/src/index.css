@@ -383,6 +383,7 @@ a:hover { color: var(--color-primary-light); }
 /* ── Main Content Area ── */
 .main-content {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   max-width: 1280px;
@@ -963,6 +964,6 @@ a:hover { color: var(--color-primary-light); }
     max-height: none;
   }
   
-  .table-container { overflow-x: auto; width: 100%; }
+  .table-wrapper { overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; }
 }
 
