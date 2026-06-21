@@ -885,11 +885,11 @@ a:hover { color: var(--color-primary-light); }
 /* ── Mobile Side Drawer ── */
 .mobile-backdrop {
   position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
-  z-index: 90; animation: fadeIn 0.3s ease forwards;
+  z-index: 900; animation: fadeIn 0.3s ease forwards;
 }
 .mobile-drawer {
   position: fixed; top: 0; bottom: 0; left: 0; width: 280px; max-width: 85vw;
-  background: var(--bg-card); z-index: 100;
+  background: var(--bg-card); z-index: 1000;
   display: flex; flex-direction: column;
   transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: var(--shadow-xl); border-right: 1px solid var(--border-default);
@@ -917,6 +917,26 @@ a:hover { color: var(--color-primary-light); }
   .page-header .btn { width: 100%; }
   
   .builder-shell { flex-direction: column; }
+  
+  .builder-body {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow-y: visible;
+  }
+  .builder-sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+    height: auto;
+    max-height: 250px;
+  }
+  .builder-canvas {
+    min-height: 50vh;
+  }
+  .builder-properties {
+    border-left: none;
+    border-top: 1px solid var(--border-subtle);
+  }
   
   .table-container { overflow-x: auto; width: 100%; }
 }
