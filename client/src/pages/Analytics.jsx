@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../components/shared/Sidebar";
 import { formsApi } from "../api";
+import { downloadCSV } from "../utils/helpers";
 
 export default function Analytics({ showToast }) {
   const [forms, setForms] = useState([]);
@@ -21,6 +22,23 @@ export default function Analytics({ showToast }) {
   const topFormsForChart = [...forms].sort((a, b) => (b.analytics?.submissions || 0) - (a.analytics?.submissions || 0)).slice(0, 7);
   const maxTrend = topFormsForChart.length > 0 ? Math.max(...topFormsForChart.map(f => f.analytics?.submissions || 0), 1) : 1;
 
+  const handleDownload = () => {
+    if (forms.length === 0) {
+      showToast("No data to export.", "error");
+      return;
+    }
+    const rows = forms.map(f => ({
+      "Form Title": f.title,
+      "Status": f.settings?.isPublished ? "Live" : "Draft",
+      "Total Views": f.analytics?.views || 0,
+      "Total Submissions": f.analytics?.submissions || 0,
+      "Completion Rate (%)": Math.round(((f.analytics?.submissions || 0) / Math.max(f.analytics?.views || 1, 1)) * 100),
+      "Created At": new Date(f.createdAt).toLocaleDateString()
+    }));
+    downloadCSV(rows, "workspace_analytics_report.csv");
+    showToast("Report downloaded successfully!", "success");
+  };
+
   return (
     <div className="layout">
       <Sidebar />
@@ -31,7 +49,9 @@ export default function Analytics({ showToast }) {
             <p className="main-subtitle" style={{ marginTop: '8px' }}>High-level insights into your forms' performance.</p>
           </div>
           <div>
-            <button className="btn btn-secondary">Download Report</button>
+            <button className="btn btn-secondary" onClick={handleDownload} disabled={forms.length === 0}>
+              Download Report
+            </button>
           </div>
         </header>
 
