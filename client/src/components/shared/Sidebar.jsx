@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { getInitials } from "../../utils/helpers";
@@ -5,6 +6,7 @@ import { getInitials } from "../../utils/helpers";
 export default function Sidebar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -13,6 +15,10 @@ export default function Sidebar() {
 
   return (
     <nav className="top-nav">
+      <button className="hamburger-btn" onClick={() => setMobileOpen(!mobileOpen)}>
+        ☰
+      </button>
+      
       {/* Logo */}
       <NavLink to="/dashboard" className="top-nav-logo">
         <div className="top-nav-logo-icon">📋</div>
@@ -20,7 +26,7 @@ export default function Sidebar() {
       </NavLink>
 
       {/* Nav links */}
-      <div className="top-nav-links">
+      <div className={`top-nav-links ${mobileOpen ? "mobile-open" : ""}`}>
         <NavLink
           to="/dashboard"
           className={({ isActive }) => `top-nav-link ${isActive ? "active" : ""}`}

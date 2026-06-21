@@ -10,6 +10,24 @@ export default function FormResponses({ showToast }) {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [exporting, setExporting] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const getShareUrl = () => `${window.location.origin}/form/${data?.form?.shareId}`;
+
+  const copyLink = () => {
+    if (!data?.form?.shareId) return;
+    const shareUrl = getShareUrl();
+    navigator.clipboard.writeText(shareUrl).catch(() => {
+      const el = document.createElement("textarea");
+      el.value = shareUrl;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+    });
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
 
   useEffect(() => {
     responsesApi
@@ -134,14 +152,23 @@ export default function FormResponses({ showToast }) {
 
           {/* Responses table */}
           {filtered.length === 0 ? (
-            <div className="empty-state">
+            <div className="empty-state" style={{ marginTop: "20px" }}>
               <div className="empty-state-icon">{search ? "🔍" : "📭"}</div>
-              <h3>{search ? "No matching responses" : "No responses yet"}</h3>
+              <h3>{search ? "No matching responses" : "Waiting for your first response!"}</h3>
               <p>
                 {search
                   ? "Try a different keyword."
-                  : "Share your form to start collecting responses."}
+                  : "Your form is ready. Share it with your audience to start collecting responses."}
               </p>
+              {!search && form?.shareId && (
+                <button
+                  className={`btn ${copied ? "btn-secondary" : "btn-primary"}`}
+                  style={{ marginTop: "16px" }}
+                  onClick={copyLink}
+                >
+                  {copied ? "✓ Link Copied!" : "🔗 Copy Share Link"}
+                </button>
+              )}
             </div>
           ) : (
             <div className="table-wrapper">

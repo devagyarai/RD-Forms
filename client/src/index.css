@@ -868,3 +868,42 @@ a:hover { color: var(--color-primary-light); }
 @keyframes fadeIn       { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideInRight { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes spin         { to { transform: rotate(360deg); } }
+
+/* ══════════════════════════════════════════════════════
+   MOBILE RESPONSIVENESS
+══════════════════════════════════════════════════════ */
+.hamburger-btn { 
+  display: none; background: transparent; border: none; 
+  color: var(--text-heading); font-size: 1.5rem; 
+  cursor: pointer; padding: 4px; line-height: 1; 
+  margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+  .hamburger-btn { display: flex; }
+  
+  .top-nav { padding: 10px 16px; position: relative; }
+  
+  .top-nav-links { display: none; }
+  .top-nav-links.mobile-open {
+    display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--bg-card); border-bottom: 1px solid var(--border-default);
+    padding: 16px; z-index: 100; align-items: stretch; gap: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  
+  .top-nav-right { gap: 8px; }
+  .user-name { display: none; } /* Hide user name on small screens, keep avatar */
+  
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .forms-grid { grid-template-columns: 1fr; }
+  
+  .main-content { padding: 20px 16px; }
+  .page-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .page-header .btn { width: 100%; }
+  
+  .builder-shell { flex-direction: column; }
+  
+  .table-container { overflow-x: auto; width: 100%; }
+}
+
