@@ -72,17 +72,25 @@ const FIELD_CATEGORIES = [
       { type: "paragraph",icon: "≣",   label: "Paragraph",    color: "#475569" },
       { type: "image",    icon: "🖼",  label: "Image",        color: "#EC4899" },
     ]
+  },
+  {
+    name: "Pre-built Blocks",
+    fields: [
+      { type: "block_contact", icon: "👤", label: "Contact Info", color: "#F43F5E" },
+      { type: "block_address", icon: "🏠", label: "Address Block", color: "#F59E0B" },
+      { type: "block_survey",  icon: "📊", label: "Survey Block", color: "#3B82F6" },
+    ]
   }
 ];
 
 const ALL_FIELDS = FIELD_CATEGORIES.flatMap(c => c.fields);
 
-function createField(type) {
+function createField(type, overrideLabel) {
   const def = ALL_FIELDS.find((f) => f.type === type);
   return {
     id: generateId(),
     type,
-    label: def?.label || "Field",
+    label: overrideLabel || def?.label || "Field",
     placeholder: "",
     helpText: "",
     required: false,
@@ -105,7 +113,7 @@ function SortableField({ field, isSelected, onClick, onDelete }) {
     opacity: isDragging ? 0.3 : 1,
   };
 
-  const def = FIELD_TYPES.find((f) => f.type === field.type);
+  const def = ALL_FIELDS.find((f) => f.type === field.type);
 
   return (
     <div
@@ -440,6 +448,12 @@ export default function FormBuilder({ showToast }) {
   const [description, setDescription] = useState("");
   const [selectedFieldId, setSelectedFieldId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showHistory, setShowHistory] = useState(false);
+  const [historyMock, setHistoryMock] = useState([
+    { id: 1, time: 'Just now', desc: 'Autosaved' },
+    { id: 2, time: '10 minutes ago', desc: 'Added contact info' },
+    { id: 3, time: '1 hour ago', desc: 'Initial draft' }
+  ]);
   const [saving, setSaving] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [activeId, setActiveId] = useState(null);
@@ -489,9 +503,21 @@ export default function FormBuilder({ showToast }) {
   const selectedField = fields.find((f) => f.id === selectedFieldId) || null;
 
   const addField = (type) => {
-    const newField = createField(type);
-    setFields((prev) => [...prev, newField]);
-    setSelectedFieldId(newField.id);
+    let newFields = [];
+    if (type.startsWith("block_")) {
+      if (type === "block_contact") {
+        newFields = [createField("text", "Full Name"), createField("email", "Email Address"), createField("phone", "Phone Number")];
+      } else if (type === "block_address") {
+        newFields = [createField("text", "Street Address"), createField("text", "City"), createField("text", "State/Province"), createField("text", "Zip/Postal Code")];
+      } else if (type === "block_survey") {
+        newFields = [createField("rating", "How satisfied are you?"), createField("textarea", "Any additional feedback?")];
+      }
+    } else {
+      newFields = [createField(type)];
+    }
+    
+    setFields((prev) => [...prev, ...newFields]);
+    setSelectedFieldId(newFields[newFields.length - 1].id);
     setHasUnsaved(true);
     setMobileTab("canvas");
   };
@@ -597,27 +623,21 @@ export default function FormBuilder({ showToast }) {
               onChange={(e) => { setTitle(e.target.value); setHasUnsaved(true); }}
               placeholder="Untitled Form"
             />
-            
-            <div style={{ display: "flex", alignItems: "center", minWidth: "70px", gap: "6px" }}>
-              {saving ? (
-                <>
-                  <div className="spinner" style={{ width: "12px", height: "12px", color: "var(--color-primary)" }} />
-                  <span style={{ fontSize: "0.75rem", color: "var(--color-primary)", fontWeight: 500 }}>Saving...</span>
-                </>
-              ) : hasUnsaved ? (
-                <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontStyle: "italic" }}>Unsaved</span>
-              ) : (
-                <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "4px" }}>
-                  <span style={{ color: "var(--color-success)" }}>✓</span> Saved
-                </span>
-              )}
-            </div>
+            <span style={{ fontSize: "0.75rem", padding: "4px 8px", borderRadius: "12px", background: isPublished ? "rgba(34, 197, 94, 0.1)" : (hasUnsaved ? "rgba(245, 158, 11, 0.1)" : "var(--bg-elevated)"), color: isPublished ? "rgb(34, 197, 94)" : (hasUnsaved ? "rgb(245, 158, 11)" : "var(--text-muted)"), fontWeight: 600 }}>
+              {isPublished ? "● Live" : (hasUnsaved ? "○ Draft (Unsaved)" : "○ Draft (Saved)")}
+            </span>
           </div>
 
           <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-            <span className={`badge ${isPublished ? "badge-success" : "badge-muted"}`}>
-              {isPublished ? "● Live" : "○ Draft"}
-            </span>
+            {saving && (
+              <span style={{ display: "flex", alignItems: "center", gap: "6px", color: "var(--text-muted)", fontSize: "0.85rem", marginRight: "8px" }}>
+                <div className="spinner" /> Saving...
+              </span>
+            )}
+            
+            <button className="btn btn-ghost btn-sm" onClick={() => setShowHistory(true)} title="Version History">
+              🕒 History
+            </button>
 
             <button
               className="btn btn-ghost btn-sm"

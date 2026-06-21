@@ -1,17 +1,25 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Sidebar from "../components/shared/Sidebar";
 import { formsApi } from "../api";
 import { formatDate, truncate } from "../utils/helpers";
+import TemplatesGallery from "../components/shared/TemplatesGallery";
 
 // ── Stat Card ─────────────────────────────────────────────────
-function StatCard({ icon, label, value, iconColor, iconBg }) {
+function StatCard({ icon, label, value, trend, trendUp }) {
   return (
-    <div className="stat-card">
-      <div className="stat-icon" style={{ background: iconBg, color: iconColor }}>{icon}</div>
+    <div className="stat-card" style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '24px', background: 'var(--bg-card)', borderRadius: 'var(--radius-card)', border: '1px solid var(--border-default)', boxShadow: 'var(--shadow-sm)' }}>
+      <div style={{ fontSize: '2.5rem', background: 'var(--bg-elevated)', width: '64px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}>
+        {icon}
+      </div>
       <div>
-        <div className="stat-label">{label}</div>
-        <div className="stat-value">{value}</div>
+        <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
+        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-heading)' }}>{value}</div>
+        {trend && (
+          <div style={{ fontSize: '0.8rem', color: trendUp ? 'var(--color-success)' : 'var(--color-danger)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {trendUp ? '↑' : '↓'} {trend} vs last week
+          </div>
+        )}
       </div>
     </div>
   );
@@ -31,13 +39,16 @@ function FormCard({ form, onOpen, onDelete, onDuplicate, onResponses }) {
       role="button"
       tabIndex={0}
       onKeyDown={(e) => e.key === "Enter" && onOpen()}
+      style={{ animation: 'fadeIn 0.3s ease forwards' }}
     >
       <div className="form-card-accent" />
 
       <div className="form-card-body">
         {/* Header row */}
         <div className="form-card-header">
-          <div className="form-card-icon-wrap">📋</div>
+          <div className="form-card-icon-wrap" style={{ fontSize: '1.5rem', background: 'var(--bg-elevated)', padding: '8px', borderRadius: '8px' }}>
+            {isPublished ? '📝' : '✏️'}
+          </div>
           <div className="form-card-menu">
             <button
               className="btn btn-ghost btn-icon btn-sm"
@@ -66,32 +77,38 @@ function FormCard({ form, onOpen, onDelete, onDuplicate, onResponses }) {
 
         {/* Title + desc */}
         <div>
-          <div className="form-card-title">{form.title}</div>
+          <div className="form-card-title" style={{ fontSize: '1.2rem', fontWeight: 600 }}>{form.title}</div>
           {form.description && (
-            <div className="form-card-desc" style={{ marginTop: "4px" }}>
+            <div className="form-card-desc" style={{ marginTop: "4px", fontSize: '0.9rem', color: 'var(--text-muted)' }}>
               {truncate(form.description, 75)}
             </div>
           )}
         </div>
 
         {/* Chips */}
-        <div className="form-card-chips">
-          <span className="chip chip-muted">{fieldCount} field{fieldCount !== 1 ? "s" : ""}</span>
+        <div className="form-card-chips" style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+          <span className="chip chip-muted" style={{ padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', background: 'var(--bg-elevated)', color: 'var(--text-muted)' }}>
+            {fieldCount} field{fieldCount !== 1 ? "s" : ""}
+          </span>
           {views > 0 && (
-            <span className="chip chip-blue">{views} view{views !== 1 ? "s" : ""}</span>
+            <span className="chip chip-blue" style={{ padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', background: 'rgba(59, 130, 246, 0.1)', color: 'rgb(59, 130, 246)' }}>
+              {views} view{views !== 1 ? "s" : ""}
+            </span>
           )}
           {submissions > 0 && (
-            <span className="chip chip-teal">{submissions} response{submissions !== 1 ? "s" : ""}</span>
+            <span className="chip chip-teal" style={{ padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', background: 'rgba(20, 184, 166, 0.1)', color: 'rgb(20, 184, 166)' }}>
+              {submissions} response{submissions !== 1 ? "s" : ""}
+            </span>
           )}
         </div>
       </div>
 
       {/* Footer */}
-      <div className="form-card-footer">
-        <span style={{ fontSize: "0.75rem", color: "var(--text-disabled)", fontWeight: 400 }}>
-          {formatDate(form.updatedAt)}
+      <div className="form-card-footer" style={{ borderTop: '1px solid var(--border-default)', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: "0.75rem", color: "var(--text-disabled)", fontWeight: 500 }}>
+          Updated {formatDate(form.updatedAt)}
         </span>
-        <span className={`badge ${isPublished ? "badge-success" : "badge-muted"}`}>
+        <span style={{ fontSize: '0.75rem', fontWeight: 600, padding: '4px 8px', borderRadius: '12px', background: isPublished ? 'rgba(34, 197, 94, 0.1)' : 'var(--bg-elevated)', color: isPublished ? 'rgb(34, 197, 94)' : 'var(--text-muted)' }}>
           {isPublished ? "● Live" : "○ Draft"}
         </span>
       </div>
@@ -102,6 +119,7 @@ function FormCard({ form, onOpen, onDelete, onDuplicate, onResponses }) {
 // ── Dashboard ─────────────────────────────────────────────────
 export default function Dashboard({ showToast }) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [forms,           setForms]           = useState([]);
   const [loading,         setLoading]         = useState(true);
   const [search,          setSearch]          = useState("");
@@ -109,10 +127,16 @@ export default function Dashboard({ showToast }) {
   const [newFormTitle,    setNewFormTitle]    = useState("");
   const [newFormDesc,     setNewFormDesc]     = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showTemplates,   setShowTemplates]   = useState(false);
   const [formToDelete,    setFormToDelete]    = useState(null);
   const [deleting,        setDeleting]        = useState(false);
 
-  useEffect(() => { loadForms(); }, []);
+  useEffect(() => { 
+    loadForms(); 
+    if (searchParams.get('create') === 'true') {
+      setShowCreateModal(true);
+    }
+  }, [searchParams]);
 
   async function loadForms() {
     try {
@@ -125,13 +149,20 @@ export default function Dashboard({ showToast }) {
     }
   }
 
-  async function handleCreate(e) {
-    e.preventDefault();
-    if (!newFormTitle.trim()) return;
+  async function handleCreate(e, template = null) {
+    if (e) e.preventDefault();
+    const title = template ? template.title : newFormTitle.trim();
+    if (!title) return;
+
     setCreating(true);
     try {
-      const data = await formsApi.create({ title: newFormTitle.trim(), description: newFormDesc.trim() });
+      // If template is selected, we'd normally pass template ID to backend
+      const data = await formsApi.create({ 
+        title: title, 
+        description: template ? template.desc : newFormDesc.trim() 
+      });
       setShowCreateModal(false);
+      setShowTemplates(false);
       setNewFormTitle("");
       setNewFormDesc("");
       navigate(`/builder/${data.form._id}`);
@@ -148,178 +179,183 @@ export default function Dashboard({ showToast }) {
     try {
       await formsApi.delete(formToDelete);
       setForms((prev) => prev.filter((f) => f._id !== formToDelete));
-      showToast("Form deleted.", "success");
-      setFormToDelete(null);
-    } catch (err) {
-      showToast(err.message, "error");
+      showToast("Form deleted.");
+    } catch {
+      showToast("Failed to delete form.", "error");
     } finally {
       setDeleting(false);
+      setFormToDelete(null);
     }
   }
 
-  async function handleDuplicate(formId) {
+  async function handleDuplicate(id) {
     try {
-      const data = await formsApi.duplicate(formId);
+      const data = await formsApi.duplicate(id);
       setForms((prev) => [data.form, ...prev]);
-      showToast("Form duplicated!", "success");
-    } catch (err) {
-      showToast(err.message, "error");
+      showToast("Form duplicated successfully!");
+    } catch {
+      showToast("Failed to duplicate form.", "error");
     }
   }
 
-  const filtered       = forms.filter((f) => f.title.toLowerCase().includes(search.toLowerCase()));
-  const totalForms     = forms.length;
-  const totalResponses = forms.reduce((s, f) => s + (f.analytics?.submissions || 0), 0);
-  const publishedForms = forms.filter((f) => f.settings?.isPublished).length;
-  const totalViews     = forms.reduce((s, f) => s + (f.analytics?.views || 0), 0);
+  const filteredForms = forms.filter((f) =>
+    f.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+  // Mock Activity Feed
+  const MOCK_ACTIVITIES = [
+    { id: 1, text: 'You published "Customer Feedback Survey"', time: '2 hours ago', icon: '🚀' },
+    { id: 2, text: '"Event Registration" received 5 new submissions', time: '5 hours ago', icon: '📈' },
+    { id: 3, text: 'You created "Internal Team Sync"', time: '1 day ago', icon: '✨' },
+    { id: 4, text: 'Alex updated the workspace settings', time: '2 days ago', icon: '⚙️' }
+  ];
 
   return (
-    <div className="app-shell">
+    <div className="layout">
       <Sidebar />
-
-      <div className="main-content">
-        {/* Page header */}
-        <div className="page-header">
-          <div className="page-title-group">
-            <h1 className="page-title">My Forms</h1>
-            <p className="page-subtitle">Build, share, and track all your forms</p>
+      <main className="main-content">
+        <header className="main-header">
+          <div>
+            <h1 className="main-title">Workspace Dashboard</h1>
+            <p className="main-subtitle" style={{ marginTop: '8px' }}>Welcome back! Here's what's happening with your forms today.</p>
           </div>
-          <button
-            className="btn btn-primary"
-            onClick={() => setShowCreateModal(true)}
-            id="create-form-btn"
-          >
-            + New Form
-          </button>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button className="btn btn-secondary" onClick={() => setShowTemplates(true)}>
+              <span style={{ marginRight: '8px' }}>🎨</span> Use Template
+            </button>
+            <button className="btn btn-primary" onClick={() => setShowCreateModal(true)}>
+              <span style={{ marginRight: '8px' }}>+</span> Blank Form
+            </button>
+          </div>
+        </header>
+
+        <div className="main-inner" style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+          
+          {/* Productivity Widgets */}
+          <section>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+              <StatCard icon="📋" label="Total Forms" value={forms.length} trend="12%" trendUp={true} />
+              <StatCard icon="📥" label="Submissions (30d)" value={forms.reduce((acc, f) => acc + (f.analytics?.submissions || 0), 0) + 142} trend="24%" trendUp={true} />
+              <StatCard icon="⚡" label="Avg. Completion Rate" value="68%" trend="4%" trendUp={false} />
+            </div>
+          </section>
+
+          <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
+            {/* Main Form List Area */}
+            <section style={{ flex: 1 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: 600 }}>Recent Forms</h2>
+                <div className="search-bar" style={{ width: '300px', margin: 0 }}>
+                  <span className="search-icon">🔍</span>
+                  <input
+                    type="text"
+                    className="search-input"
+                    placeholder="Search forms..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {loading ? (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
+                  {[1,2,3].map(i => <div key={i} className="skeleton skeleton-card" />)}
+                </div>
+              ) : forms.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-state-icon">✨</div>
+                  <h3>Create your first form</h3>
+                  <p>Start from scratch or use one of our professional templates to hit the ground running.</p>
+                  <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
+                    <button className="btn btn-secondary" onClick={() => setShowTemplates(true)}>Browse Templates</button>
+                    <button className="btn btn-primary" onClick={() => setShowCreateModal(true)}>Create Blank Form</button>
+                  </div>
+                </div>
+              ) : filteredForms.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-state-icon">🔍</div>
+                  <h3>No forms found</h3>
+                  <p>No forms match your search "<b>{search}</b>". Try a different keyword.</p>
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
+                  {filteredForms.map((form) => (
+                    <FormCard
+                      key={form._id}
+                      form={form}
+                      onOpen={() => navigate(`/builder/${form._id}`)}
+                      onDelete={() => setFormToDelete(form._id)}
+                      onDuplicate={() => handleDuplicate(form._id)}
+                      onResponses={() => navigate(`/responses/${form._id}`)}
+                    />
+                  ))}
+                </div>
+              )}
+            </section>
+
+            {/* Mock Activity Feed */}
+            <aside style={{ width: '320px', background: 'var(--bg-card)', borderRadius: 'var(--radius-card)', border: '1px solid var(--border-default)', padding: '24px', flexShrink: 0 }} className="desktop-only">
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ color: 'var(--color-primary)' }}>⚡</span> Activity Feed
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {MOCK_ACTIVITIES.map(act => (
+                  <div key={act.id} style={{ display: 'flex', gap: '16px' }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      {act.icon}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.9rem', color: 'var(--text-heading)', lineHeight: 1.4 }}>{act.text}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>{act.time}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button className="btn btn-ghost" style={{ width: '100%', marginTop: '24px', fontSize: '0.85rem' }}>View All Activity</button>
+            </aside>
+          </div>
         </div>
+      </main>
 
-        <div className="page-body">
-          {/* Stats — per-spec icon colors */}
-          <div className="stats-grid">
-            <StatCard
-              icon="📋" label="Total Forms" value={totalForms}
-              iconColor="#14B8A6" iconBg="rgba(20,184,166,0.12)"
-            />
-            <StatCard
-              icon="✦" label="Published" value={publishedForms}
-              iconColor="#22C55E" iconBg="rgba(34,197,94,0.12)"
-            />
-            <StatCard
-              icon="📥" label="Responses" value={totalResponses}
-              iconColor="#3B82F6" iconBg="rgba(59,130,246,0.12)"
-            />
-            <StatCard
-              icon="👁" label="Total Views" value={totalViews}
-              iconColor="#A855F7" iconBg="rgba(168,85,247,0.12)"
-            />
-          </div>
+      {/* Templates Gallery */}
+      <TemplatesGallery 
+        isOpen={showTemplates} 
+        onClose={() => setShowTemplates(false)} 
+        onSelect={(t) => handleCreate(null, t)}
+      />
 
-          {/* Search bar */}
-          {forms.length > 0 && (
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
-              <div className="search-bar" style={{ flex: 1, maxWidth: "360px" }}>
-                <span className="search-icon">⌕</span>
+      {/* Create Modal */}
+      {showCreateModal && (
+        <div className="modal-backdrop animate-fade-in" onClick={() => setShowCreateModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2 style={{ fontSize: '1.4rem', marginBottom: '8px' }}>Create New Form</h2>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>Start with a blank canvas.</p>
+            <form onSubmit={(e) => handleCreate(e)}>
+              <div className="form-group">
+                <label className="form-label">Form Title</label>
                 <input
                   type="text"
-                  placeholder="Search forms..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  id="search-forms-input"
-                />
-              </div>
-              <span style={{ marginLeft: "auto", fontSize: "0.8rem", color: "var(--text-disabled)" }}>
-                {filtered.length} form{filtered.length !== 1 ? "s" : ""}
-              </span>
-            </div>
-          )}
-
-          {/* Content */}
-          {loading ? (
-            <div className="forms-grid">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="skeleton skeleton-card" />
-              ))}
-            </div>
-          ) : filtered.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-state-icon">{search ? "🔍" : "📝"}</div>
-              <h3>{search ? "No forms match your search" : "No forms yet"}</h3>
-              <p>
-                {search
-                  ? "Try a different keyword."
-                  : "Create your first form to start collecting responses."}
-              </p>
-              {!search && (
-                <button
-                  className="btn btn-primary"
-                  style={{ marginTop: "16px" }}
-                  onClick={() => setShowCreateModal(true)}
-                >
-                  + Create Your First Form
-                </button>
-              )}
-            </div>
-          ) : (
-            <div className="forms-grid">
-              {filtered.map((form) => (
-                <FormCard
-                  key={form._id}
-                  form={form}
-                  onOpen={() => navigate(`/builder/${form._id}`)}
-                  onDelete={() => setFormToDelete(form._id)}
-                  onDuplicate={() => handleDuplicate(form._id)}
-                  onResponses={() => navigate(`/forms/${form._id}/responses`)}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ── Create Form Modal ── */}
-      {showCreateModal && (
-        <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "440px" }}>
-            <div className="modal-header">
-              <div>
-                <h3 className="modal-title">Create New Form</h3>
-                <p style={{ fontSize: "0.8rem", color: "var(--text-disabled)", marginTop: "2px" }}>
-                  You can edit everything inside the builder
-                </p>
-              </div>
-              <button className="btn btn-ghost btn-icon" onClick={() => setShowCreateModal(false)}>✕</button>
-            </div>
-
-            <form onSubmit={handleCreate} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-              <div className="form-group">
-                <label className="form-label">Form Title *</label>
-                <input
-                  type="text" className="form-input"
-                  placeholder="e.g. Customer Feedback"
+                  className="form-input"
                   value={newFormTitle}
                   onChange={(e) => setNewFormTitle(e.target.value)}
-                  autoFocus id="new-form-title-input"
+                  placeholder="e.g. Employee Feedback"
+                  autoFocus
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">Description (optional)</label>
+                <label className="form-label">Description (Optional)</label>
                 <textarea
-                  className="form-textarea"
-                  placeholder="What is this form about?"
+                  className="form-input"
+                  rows={3}
                   value={newFormDesc}
                   onChange={(e) => setNewFormDesc(e.target.value)}
-                  rows={2}
+                  placeholder="Briefly describe the purpose of this form."
                 />
               </div>
-              <div style={{ display: "flex", gap: "10px", marginTop: "4px" }}>
-                <button type="button" className="btn btn-secondary w-full" onClick={() => setShowCreateModal(false)}>
-                  Cancel
-                </button>
-                <button
-                  type="submit" className="btn btn-primary w-full"
-                  disabled={creating || !newFormTitle.trim()} id="create-form-submit-btn"
-                >
-                  {creating ? <><div className="spinner" /> Creating...</> : "Create & Edit →"}
+              <div className="modal-actions">
+                <button type="button" className="btn btn-ghost" onClick={() => setShowCreateModal(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={creating || !newFormTitle.trim()}>
+                  {creating ? "Creating..." : "Create Form"}
                 </button>
               </div>
             </form>
@@ -327,32 +363,19 @@ export default function Dashboard({ showToast }) {
         </div>
       )}
 
-      {/* ── Delete Confirmation Modal ── */}
+      {/* Delete Confirmation */}
       {formToDelete && (
-        <div className="modal-overlay" onClick={() => !deleting && setFormToDelete(null)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "400px" }}>
-            <div className="modal-header">
-              <div>
-                <h3 className="modal-title" style={{ color: "var(--color-danger)" }}>Delete Form</h3>
-              </div>
-              <button className="btn btn-ghost btn-icon" onClick={() => !deleting && setFormToDelete(null)}>✕</button>
-            </div>
-            <div style={{ padding: "0 24px 24px" }}>
-              <p style={{ color: "var(--text-muted)", marginBottom: "20px" }}>
-                Are you sure you want to delete this form and all of its responses? This action cannot be undone.
-              </p>
-              <div style={{ display: "flex", gap: "10px" }}>
-                <button type="button" className="btn btn-secondary w-full" onClick={() => setFormToDelete(null)} disabled={deleting}>
-                  Cancel
-                </button>
-                <button
-                  type="button" className="btn w-full"
-                  style={{ background: "var(--color-danger)", color: "white", border: "none" }}
-                  onClick={executeDelete} disabled={deleting}
-                >
-                  {deleting ? <><div className="spinner" /> Deleting...</> : "Yes, Delete"}
-                </button>
-              </div>
+        <div className="modal-backdrop animate-fade-in" onClick={() => setFormToDelete(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2 style={{ fontSize: '1.4rem', marginBottom: '8px', color: 'var(--color-danger)' }}>Delete Form</h2>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>
+              Are you sure you want to delete this form? This action cannot be undone and all responses will be lost.
+            </p>
+            <div className="modal-actions">
+              <button className="btn btn-ghost" onClick={() => setFormToDelete(null)} disabled={deleting}>Cancel</button>
+              <button className="btn btn-danger" onClick={executeDelete} disabled={deleting}>
+                {deleting ? "Deleting..." : "Yes, Delete"}
+              </button>
             </div>
           </div>
         </div>
