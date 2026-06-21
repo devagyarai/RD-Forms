@@ -45,8 +45,8 @@ export default function Register({ showToast }) {
       <div className="auth-panel-left">
         <div className="auth-panel-brand">
           <div className="auth-panel-logo-wrap">
-            <div className="auth-panel-logo-icon" style={{ overflow: 'hidden' }}>
-              <img src="/logo.png" alt="RD Forms Logo Icon" style={{ width: "135%", height: "135%", objectFit: "contain", mixBlendMode: "multiply" }} />
+            <div className="auth-panel-logo-icon">
+              <img src="/logo.png" alt="RD Forms Logo Icon" style={{ width: "65%", height: "65%", objectFit: "contain" }} />
             </div>
             <div>
               <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--text-heading)" }}>RD Forms</div>
