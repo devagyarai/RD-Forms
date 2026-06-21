@@ -7,13 +7,13 @@ export default function Settings({ showToast }) {
   const { theme, setTheme, accentColor, setAccentColor, borderRadius, setBorderRadius } = useTheme();
 
   const THEMES = [
-    { id: "midnight", name: "Midnight Dark", desc: "Sleek and professional dark mode." },
-    { id: "ocean", name: "Ocean Blue", desc: "Calming oceanic tones." },
-    { id: "minimal", name: "Minimal White", desc: "Clean, high-contrast light mode." },
-    { id: "professional", name: "Professional Gray", desc: "Subtle neutral grays." },
-    { id: "emerald", name: "Emerald Green", desc: "Vibrant and energetic." },
-    { id: "royal", name: "Royal Purple", desc: "Elegant and premium." },
-    { id: "sunset", name: "Sunset Orange", desc: "Warm and inviting." }
+    { id: "midnight-dark", name: "Midnight Dark", colors: { base: "#0B1120", surface: "#111827", nav: "#0F172A" } },
+    { id: "ocean-blue", name: "Ocean Blue", colors: { base: "#081229", surface: "#0F1C3F", nav: "#0B1736" } },
+    { id: "minimal-white", name: "Minimal White", colors: { base: "#F8FAFC", surface: "#FFFFFF", nav: "#F8FAFC", border: "#e2e8f0" } },
+    { id: "professional-gray", name: "Professional Gray", colors: { base: "#18181B", surface: "#27272A", nav: "#18181B" } },
+    { id: "emerald-green", name: "Emerald Green", colors: { base: "#061711", surface: "#064E3B", nav: "#022C22" } },
+    { id: "royal-purple", name: "Royal Purple", colors: { base: "#1A0B2E", surface: "#2E1065", nav: "#140524" } },
+    { id: "sunset-orange", name: "Sunset Orange", colors: { base: "#2A0E08", surface: "#431407", nav: "#1C0904" } }
   ];
 
   const ACCENTS = ["#3B82F6", "#14B8A6", "#8B5CF6", "#F43F5E", "#EAB308", "#10B981", "#F97316"];
@@ -91,11 +91,11 @@ export default function Settings({ showToast }) {
                     {THEMES.map(t => (
                       <div key={t.id} className={`theme-btn ${theme === t.id ? "active" : ""}`} onClick={() => setTheme(t.id)}>
                         <div className="theme-preview" style={{ 
-                          background: t.id === 'minimal' ? '#ffffff' : t.id.includes('dark') ? '#0f172a' : 'var(--bg-base)',
-                          borderColor: t.id === 'minimal' ? '#e2e8f0' : 'transparent'
+                          background: t.colors.base,
+                          borderColor: t.colors.border || 'transparent'
                         }}>
-                          <div className="theme-preview-nav" style={{ background: t.id === 'minimal' ? '#f8fafc' : 'var(--bg-elevated)' }}></div>
-                          <div className="theme-preview-body" style={{ background: t.id === 'minimal' ? '#ffffff' : 'var(--bg-surface)' }}></div>
+                          <div className="theme-preview-nav" style={{ background: t.colors.nav, borderBottom: t.colors.border ? `1px solid ${t.colors.border}` : 'none' }}></div>
+                          <div className="theme-preview-body" style={{ background: t.colors.surface, borderColor: t.colors.border || 'var(--border-subtle)' }}></div>
                         </div>
                         <span>{t.name}</span>
                       </div>
