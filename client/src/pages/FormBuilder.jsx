@@ -371,6 +371,7 @@ export default function FormBuilder({ showToast }) {
   const [showShare, setShowShare] = useState(false);
   const [activeId, setActiveId] = useState(null);
   const [hasUnsaved, setHasUnsaved] = useState(false);
+  const [mobileTab, setMobileTab] = useState("canvas"); // 'add', 'canvas', 'properties'
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -412,6 +413,16 @@ export default function FormBuilder({ showToast }) {
     setFields((prev) => [...prev, newField]);
     setSelectedFieldId(newField.id);
     setHasUnsaved(true);
+    setMobileTab("canvas");
+  };
+
+  const handleFieldClick = (id) => {
+    if (selectedFieldId === id) {
+      setSelectedFieldId(null);
+    } else {
+      setSelectedFieldId(id);
+      setMobileTab("properties");
+    }
   };
 
   const updateSelectedField = (updated) => {
@@ -562,7 +573,7 @@ export default function FormBuilder({ showToast }) {
         <div className="builder-body">
 
           {/* Left panel — field palette */}
-          <div className="builder-sidebar">
+          <div className={`builder-sidebar ${mobileTab !== 'add' ? 'mobile-hidden' : ''}`}>
             <p className="sidebar-section-label" style={{ marginBottom: "10px" }}>Add Fields</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
               {FIELD_TYPES.map((ft) => (
@@ -595,7 +606,7 @@ export default function FormBuilder({ showToast }) {
           </div>
 
           {/* Center — form canvas */}
-          <div className="builder-canvas">
+          <div className={`builder-canvas ${mobileTab !== 'canvas' ? 'mobile-hidden' : ''}`}>
             {/* Form header card */}
             <div className="canvas-form-header">
               <input
@@ -635,7 +646,7 @@ export default function FormBuilder({ showToast }) {
                       key={field.id}
                       field={field}
                       isSelected={field.id === selectedFieldId}
-                      onClick={() => setSelectedFieldId(field.id === selectedFieldId ? null : field.id)}
+                      onClick={() => handleFieldClick(field.id)}
                       onDelete={deleteField}
                     />
                   ))}
@@ -677,7 +688,7 @@ export default function FormBuilder({ showToast }) {
           </div>
 
           {/* Right panel — properties */}
-          <div className="builder-properties">
+          <div className={`builder-properties ${mobileTab !== 'properties' ? 'mobile-hidden' : ''}`}>
             <p className="sidebar-section-label" style={{ marginBottom: "16px" }}>Field Properties</p>
             <PropertiesPanel
               field={selectedField}
@@ -685,6 +696,32 @@ export default function FormBuilder({ showToast }) {
             />
           </div>
         </div>
+        
+        {/* Mobile Tab Bar */}
+        <div className="mobile-tab-bar mobile-only">
+          <button 
+            className={`mobile-tab-btn ${mobileTab === 'add' ? 'active' : ''}`}
+            onClick={() => setMobileTab('add')}
+          >
+            <span className="mobile-tab-icon">➕</span>
+            Add
+          </button>
+          <button 
+            className={`mobile-tab-btn ${mobileTab === 'canvas' ? 'active' : ''}`}
+            onClick={() => setMobileTab('canvas')}
+          >
+            <span className="mobile-tab-icon">📋</span>
+            Canvas
+          </button>
+          <button 
+            className={`mobile-tab-btn ${mobileTab === 'properties' ? 'active' : ''}`}
+            onClick={() => setMobileTab('properties')}
+          >
+            <span className="mobile-tab-icon">⚙️</span>
+            Properties
+          </button>
+        </div>
+
       </div>
 
       {/* Share modal — uses shareId from form state directly */}

@@ -918,24 +918,49 @@ a:hover { color: var(--color-primary-light); }
   
   .builder-shell { flex-direction: column; }
   
+  .mobile-hidden { display: none !important; }
+  
+  .mobile-tab-bar {
+    display: flex;
+    background: var(--bg-navbar);
+    border-top: 1px solid var(--border-subtle);
+    position: sticky;
+    bottom: 0;
+    z-index: 200;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .mobile-tab-btn {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; padding: 10px 0; background: transparent; border: none;
+    color: var(--text-muted); font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: color 0.2s;
+  }
+  .mobile-tab-btn.active { color: var(--color-primary); }
+  .mobile-tab-icon { font-size: 1.1rem; }
+  
   .builder-body {
     display: flex;
     flex-direction: column;
-    height: auto;
-    overflow-y: visible;
+    flex: 1;
+    overflow: hidden;
   }
   .builder-sidebar {
     border-right: none;
-    border-bottom: 1px solid var(--border-subtle);
-    height: auto;
-    max-height: 250px;
+    border-bottom: none;
+    flex: 1;
+    overflow-y: auto;
+    max-height: none;
   }
   .builder-canvas {
-    min-height: 50vh;
+    flex: 1;
+    overflow-y: auto;
+    min-height: auto;
   }
   .builder-properties {
     border-left: none;
-    border-top: 1px solid var(--border-subtle);
+    border-top: none;
+    flex: 1;
+    overflow-y: auto;
+    max-height: none;
   }
   
   .table-container { overflow-x: auto; width: 100%; }
