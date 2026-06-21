@@ -275,6 +275,23 @@ export default function PublicForm({ showToast }) {
       </div>
 
       <div className="public-form-container">
+        {/* Progress Bar */}
+        {!submitted && form.fields?.some(f => f.required) && (
+          <div className="form-progress-container" style={{ marginBottom: "20px", borderRadius: "var(--radius-card)" }}>
+            <div className="form-progress-track">
+              <div 
+                className="form-progress-fill" 
+                style={{ 
+                  width: `${Math.round((form.fields.filter(f => f.required && answers[f.id] !== undefined && answers[f.id] !== null && answers[f.id] !== "" && (!Array.isArray(answers[f.id]) || answers[f.id].length > 0)).length / form.fields.filter(f => f.required).length) * 100)}%` 
+                }} 
+              />
+            </div>
+            <div className="form-progress-text">
+              {form.fields.filter(f => f.required && answers[f.id] !== undefined && answers[f.id] !== null && answers[f.id] !== "" && (!Array.isArray(answers[f.id]) || answers[f.id].length > 0)).length} / {form.fields.filter(f => f.required).length} required
+            </div>
+          </div>
+        )}
+
         <div className="public-form-card">
           <div className="public-form-banner" />
 

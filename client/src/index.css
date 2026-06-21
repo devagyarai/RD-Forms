@@ -696,6 +696,39 @@ a:hover { color: var(--color-primary-light); }
 .star-btn { background: none; border: none; font-size: 2rem; cursor: pointer; color: var(--border-default); transition: var(--transition); padding: 0; line-height: 1; }
 .star-btn.active, .star-btn:hover { color: var(--color-warning); transform: scale(1.15); }
 
+/* ── Progress Bar ── */
+.form-progress-container {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-default);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.form-progress-track {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-input);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.form-progress-fill {
+  height: 100%;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease-out;
+}
+.form-progress-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
 /* ══════════════════════════════════════════════════════
    RESPONSE TABLE
 ══════════════════════════════════════════════════════ */
@@ -766,6 +799,23 @@ a:hover { color: var(--color-primary-light); }
 .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.15); border-top-color: currentColor; border-radius: 50%; animation: spin 0.65s linear infinite; flex-shrink: 0; }
 .spinner-lg { width: 36px; height: 36px; border-width: 3px; }
 .loading-page { min-height: 50vh; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px; color: var(--text-muted); }
+
+/* ── Skeleton Loaders ── */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-elevated) 50%, var(--bg-card) 75%);
+  background-size: 400% 100%;
+  animation: pulseSkeleton 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+.skeleton-card {
+  height: 140px;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border-default);
+}
+@keyframes pulseSkeleton {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
 
 /* ══════════════════════════════════════════════════════
    EMPTY STATE

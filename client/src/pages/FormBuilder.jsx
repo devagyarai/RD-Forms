@@ -396,6 +396,15 @@ export default function FormBuilder({ showToast }) {
   useEffect(() => { setHasUnsaved(true); }, [fields, title, description]);
   useEffect(() => { setHasUnsaved(false); }, [form]);
 
+  // Auto-save logic
+  useEffect(() => {
+    if (!hasUnsaved || loading || saving) return;
+    const timer = setTimeout(() => {
+      handleSave(null, true);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [hasUnsaved, loading, saving, title, description, fields]);
+
   const selectedField = fields.find((f) => f.id === selectedFieldId) || null;
 
   const addField = (type) => {
@@ -431,7 +440,7 @@ export default function FormBuilder({ showToast }) {
     }
   };
 
-  const handleSave = async (publishOverride = null) => {
+  const handleSave = async (publishOverride = null, isAutoSave = false) => {
     setSaving(true);
     try {
       const settings = {};
@@ -449,15 +458,14 @@ export default function FormBuilder({ showToast }) {
 
       if (publishOverride === true) {
         showToast("Form published! 🎉 Share it now.", "success");
-        // Auto open share modal after publish
         setTimeout(() => setShowShare(true), 400);
       } else if (publishOverride === false) {
         showToast("Form unpublished.", "success");
-      } else {
+      } else if (!isAutoSave) {
         showToast("Saved ✓", "success");
       }
     } catch (err) {
-      showToast(err.message, "error");
+      if (!isAutoSave) showToast(err.message, "error");
     } finally {
       setSaving(false);
     }
@@ -498,11 +506,21 @@ export default function FormBuilder({ showToast }) {
               onChange={(e) => { setTitle(e.target.value); setHasUnsaved(true); }}
               placeholder="Untitled Form"
             />
-            {hasUnsaved && (
-              <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", flexShrink: 0, fontStyle: "italic" }}>
-                Unsaved
-              </span>
-            )}
+            
+            <div style={{ display: "flex", alignItems: "center", minWidth: "70px", gap: "6px" }}>
+              {saving ? (
+                <>
+                  <div className="spinner" style={{ width: "12px", height: "12px", color: "var(--color-primary)" }} />
+                  <span style={{ fontSize: "0.75rem", color: "var(--color-primary)", fontWeight: 500 }}>Saving...</span>
+                </>
+              ) : hasUnsaved ? (
+                <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontStyle: "italic" }}>Unsaved</span>
+              ) : (
+                <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "4px" }}>
+                  <span style={{ color: "var(--color-success)" }}>✓</span> Saved
+                </span>
+              )}
+            </div>
           </div>
 
           <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
@@ -522,11 +540,11 @@ export default function FormBuilder({ showToast }) {
 
             <button
               className="btn btn-secondary btn-sm"
-              onClick={() => handleSave()}
-              disabled={saving}
+              onClick={() => handleSave(null, false)}
+              disabled={saving || !hasUnsaved}
               id="save-btn"
             >
-              {saving ? <><div className="spinner" /> Saving...</> : "Save"}
+              Save
             </button>
 
             <button

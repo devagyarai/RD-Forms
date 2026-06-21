@@ -109,6 +109,8 @@ export default function Dashboard({ showToast }) {
   const [newFormTitle,    setNewFormTitle]    = useState("");
   const [newFormDesc,     setNewFormDesc]     = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [formToDelete,    setFormToDelete]    = useState(null);
+  const [deleting,        setDeleting]        = useState(false);
 
   useEffect(() => { loadForms(); }, []);
 
@@ -140,14 +142,18 @@ export default function Dashboard({ showToast }) {
     }
   }
 
-  async function handleDelete(formId) {
-    if (!confirm("Delete this form and all its responses? This cannot be undone.")) return;
+  async function executeDelete() {
+    if (!formToDelete) return;
+    setDeleting(true);
     try {
-      await formsApi.delete(formId);
-      setForms((prev) => prev.filter((f) => f._id !== formId));
+      await formsApi.delete(formToDelete);
+      setForms((prev) => prev.filter((f) => f._id !== formToDelete));
       showToast("Form deleted.", "success");
+      setFormToDelete(null);
     } catch (err) {
       showToast(err.message, "error");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -229,9 +235,10 @@ export default function Dashboard({ showToast }) {
 
           {/* Content */}
           {loading ? (
-            <div className="loading-page" style={{ minHeight: "280px" }}>
-              <div className="spinner spinner-lg" style={{ color: "var(--color-primary)" }} />
-              <span style={{ color: "var(--text-muted)" }}>Loading your forms...</span>
+            <div className="forms-grid">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="skeleton skeleton-card" />
+              ))}
             </div>
           ) : filtered.length === 0 ? (
             <div className="empty-state">
@@ -259,7 +266,7 @@ export default function Dashboard({ showToast }) {
                   key={form._id}
                   form={form}
                   onOpen={() => navigate(`/builder/${form._id}`)}
-                  onDelete={() => handleDelete(form._id)}
+                  onDelete={() => setFormToDelete(form._id)}
                   onDuplicate={() => handleDuplicate(form._id)}
                   onResponses={() => navigate(`/forms/${form._id}/responses`)}
                 />
@@ -316,6 +323,37 @@ export default function Dashboard({ showToast }) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── Delete Confirmation Modal ── */}
+      {formToDelete && (
+        <div className="modal-overlay" onClick={() => !deleting && setFormToDelete(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "400px" }}>
+            <div className="modal-header">
+              <div>
+                <h3 className="modal-title" style={{ color: "var(--color-danger)" }}>Delete Form</h3>
+              </div>
+              <button className="btn btn-ghost btn-icon" onClick={() => !deleting && setFormToDelete(null)}>✕</button>
+            </div>
+            <div style={{ padding: "0 24px 24px" }}>
+              <p style={{ color: "var(--text-muted)", marginBottom: "20px" }}>
+                Are you sure you want to delete this form and all of its responses? This action cannot be undone.
+              </p>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button type="button" className="btn btn-secondary w-full" onClick={() => setFormToDelete(null)} disabled={deleting}>
+                  Cancel
+                </button>
+                <button
+                  type="button" className="btn w-full"
+                  style={{ background: "var(--color-danger)", color: "white", border: "none" }}
+                  onClick={executeDelete} disabled={deleting}
+                >
+                  {deleting ? <><div className="spinner" /> Deleting...</> : "Yes, Delete"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
