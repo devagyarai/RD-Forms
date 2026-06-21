@@ -283,7 +283,7 @@ export default function Dashboard({ showToast }) {
                       onOpen={() => navigate(`/builder/${form._id}`)}
                       onDelete={() => setFormToDelete(form._id)}
                       onDuplicate={() => handleDuplicate(form._id)}
-                      onResponses={() => navigate(`/responses/${form._id}`)}
+                      onResponses={() => navigate(`/forms/${form._id}/responses`)}
                     />
                   ))}
                 </div>

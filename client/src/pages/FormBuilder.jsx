@@ -654,6 +654,14 @@ export default function FormBuilder({ showToast }) {
 
             <button
               className="btn btn-ghost btn-sm"
+              onClick={() => navigate(`/forms/${id}/responses`)}
+              title="View Responses"
+            >
+              📊 Responses
+            </button>
+
+            <button
+              className="btn btn-ghost btn-sm"
               onClick={() => window.open(`/form/${id}?preview=true`, '_blank')}
             >
               👁 Preview
