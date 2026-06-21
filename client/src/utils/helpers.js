@@ -46,8 +46,10 @@ export function downloadCSV(rows, filename = "export.csv") {
   if (!rows || rows.length === 0) return;
 
   const headers = Object.keys(rows[0]);
+  const escapedHeaders = headers.map(h => `"${String(h).replace(/"/g, '""')}"`);
+  
   const csvContent = [
-    headers.join(","),
+    escapedHeaders.join(","),
     ...rows.map((row) =>
       headers
         .map((h) => {
