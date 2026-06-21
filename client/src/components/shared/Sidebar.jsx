@@ -32,8 +32,8 @@ export default function Sidebar() {
         
         {/* Logo */}
         <NavLink to="/dashboard" className="top-nav-logo" onClick={() => setMobileOpen(false)}>
-          <div className="top-nav-logo-icon">
-            <img src="/logo.png" alt="RD Forms Logo Icon" style={{ width: "65%", height: "65%", objectFit: "contain" }} />
+          <div className="top-nav-logo-icon" style={{ background: "#FFFFFF" }}>
+            <img src="/logo.png" alt="RD Forms Logo Icon" style={{ width: "85%", height: "85%", objectFit: "contain" }} />
           </div>
           <span className="top-nav-logo-text">RD Forms</span>
         </NavLink>
@@ -139,8 +139,8 @@ export default function Sidebar() {
       <div className={`mobile-drawer ${mobileOpen ? "open" : ""}`}>
         <div className="mobile-drawer-header">
           <div className="top-nav-logo">
-            <div className="top-nav-logo-icon">
-              <img src="/logo.png" alt="RD Forms Logo Icon" style={{ width: "65%", height: "65%", objectFit: "contain" }} />
+            <div className="top-nav-logo-icon" style={{ background: "#FFFFFF" }}>
+              <img src="/logo.png" alt="RD Forms Logo Icon" style={{ width: "85%", height: "85%", objectFit: "contain" }} />
             </div>
             <span className="top-nav-logo-text">RD Forms</span>
           </div>

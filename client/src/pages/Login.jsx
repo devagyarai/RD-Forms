@@ -38,8 +38,8 @@ export default function Login({ showToast }) {
       <div className="auth-panel-left">
         <div className="auth-panel-brand">
           <div className="auth-panel-logo-wrap">
-            <div className="auth-panel-logo-icon">
-              <img src="/logo.png" alt="RD Forms Logo Icon" style={{ width: "65%", height: "65%", objectFit: "contain" }} />
+            <div className="auth-panel-logo-icon" style={{ background: "#FFFFFF" }}>
+              <img src="/logo.png" alt="RD Forms Logo Icon" style={{ width: "85%", height: "85%", objectFit: "contain" }} />
             </div>
             <div>
               <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--text-heading)" }}>RD Forms</div>
